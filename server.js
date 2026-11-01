@@ -3,22 +3,32 @@ const express = require('express');
 const cors = require('cors');
 const { Server } = require('socket.io');
 const net = require('net');
+const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const serverStartTime = Date.now();
 
 // ---------------------------------------------------------------------------
-// Express middleware
+// Express middleware & static files
 // ---------------------------------------------------------------------------
 app.use(cors({ origin: '*', methods: ['GET', 'POST'] }));
 app.use(express.json());
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/health', (req, res) => {
   res.json({
     status: 'ok',
+    uptimeSeconds: Math.floor((Date.now() - serverStartTime) / 1000),
     timestamp: new Date().toISOString(),
     registeredPcs: Object.keys(registeredPcs).length,
+    connectedMobiles: Object.keys(mobilePcMap).length,
+    port: PORT,
   });
+});
+
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 // ---------------------------------------------------------------------------
