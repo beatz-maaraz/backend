@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Backend Server Status</title>
+  <title>Backend Server Status & Connected Devices</title>
   <style>
     :root {
       --bg: #0b0f19;
@@ -16,6 +16,8 @@
       --red: #ef4444;
       --red-glow: rgba(239, 68, 68, 0.35);
       --accent: #3b82f6;
+      --purple: #8b5cf6;
+      --teal: #14b8a6;
     }
 
     * {
@@ -33,12 +35,12 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 24px 16px;
+      padding: 32px 16px;
     }
 
     .container {
       width: 100%;
-      max-width: 680px;
+      max-width: 720px;
       display: flex;
       flex-direction: column;
       gap: 20px;
@@ -49,7 +51,7 @@
       background: var(--card-bg);
       border: 2px solid var(--card-border);
       border-radius: 16px;
-      padding: 32px 24px;
+      padding: 28px 24px;
       text-align: center;
       box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
       transition: border-color 0.3s ease, box-shadow 0.3s ease;
@@ -70,9 +72,9 @@
       align-items: center;
       gap: 10px;
       background: rgba(16, 185, 129, 0.15);
-      padding: 8px 18px;
+      padding: 6px 16px;
       border-radius: 50px;
-      margin-bottom: 16px;
+      margin-bottom: 12px;
       border: 1px solid rgba(16, 185, 129, 0.3);
       transition: all 0.3s ease;
     }
@@ -83,8 +85,8 @@
     }
 
     .pulse-dot {
-      width: 14px;
-      height: 14px;
+      width: 12px;
+      height: 12px;
       background: var(--green);
       border-radius: 50%;
       box-shadow: 0 0 10px var(--green);
@@ -109,7 +111,7 @@
     }
 
     .status-badge-text {
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 700;
       letter-spacing: 0.5px;
       text-transform: uppercase;
@@ -121,23 +123,23 @@
     }
 
     .main-title {
-      font-size: 32px;
+      font-size: 28px;
       font-weight: 800;
       color: #ffffff;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
       letter-spacing: -0.5px;
     }
 
     .sub-title {
       color: var(--text-muted);
-      font-size: 15px;
+      font-size: 14px;
       line-height: 1.5;
     }
 
     /* Stats Grid */
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
       gap: 12px;
     }
 
@@ -145,14 +147,14 @@
       background: var(--card-bg);
       border: 1px solid var(--card-border);
       border-radius: 12px;
-      padding: 16px;
+      padding: 14px 16px;
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 4px;
     }
 
     .stat-label {
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.5px;
@@ -160,46 +162,227 @@
     }
 
     .stat-value {
-      font-size: 20px;
+      font-size: 18px;
       font-weight: 700;
       color: #ffffff;
       word-break: break-all;
     }
 
-    /* Details Panel */
-    .details-card {
+    /* Connected Devices Section */
+    .section-card {
       background: var(--card-bg);
       border: 1px solid var(--card-border);
-      border-radius: 12px;
+      border-radius: 14px;
       padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
     }
 
-    .section-title {
-      font-size: 14px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: var(--text-muted);
-      margin-bottom: 14px;
+    .section-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      padding-bottom: 12px;
+    }
+
+    .section-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .device-count-pill {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 20px;
+      background: rgba(59, 130, 246, 0.15);
+      color: var(--accent);
+      border: 1px solid rgba(59, 130, 246, 0.3);
     }
 
     .refresh-pill {
       font-size: 11px;
       font-weight: 600;
-      color: var(--accent);
-      background: rgba(59, 130, 246, 0.12);
-      padding: 4px 10px;
-      border-radius: 20px;
-      border: 1px solid rgba(59, 130, 246, 0.25);
+      color: var(--text-muted);
     }
 
-    .endpoints-list {
+    /* Device Cards */
+    .devices-list {
       display: flex;
       flex-direction: column;
       gap: 10px;
+    }
+
+    .device-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #0d1322;
+      border: 1px solid #1c263e;
+      border-radius: 10px;
+      padding: 14px 16px;
+      transition: border-color 0.2s ease, transform 0.15s ease;
+    }
+
+    .device-card:hover {
+      border-color: #2a3a5c;
+      transform: translateY(-1px);
+    }
+
+    .device-info-group {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .device-icon-box {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .device-icon-box.laptop {
+      background: rgba(139, 92, 246, 0.15);
+      border: 1px solid rgba(139, 92, 246, 0.35);
+      color: #c084fc;
+    }
+
+    .device-icon-box.mobile {
+      background: rgba(20, 184, 166, 0.15);
+      border: 1px solid rgba(20, 184, 166, 0.35);
+      color: #2dd4bf;
+    }
+
+    .device-details {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .device-title-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .device-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .tag {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 4px;
+      letter-spacing: 0.3px;
+    }
+
+    .tag.laptop {
+      background: rgba(139, 92, 246, 0.2);
+      color: #d8b4fe;
+      border: 1px solid rgba(139, 92, 246, 0.4);
+    }
+
+    .tag.mobile {
+      background: rgba(20, 184, 166, 0.2);
+      color: #5eead4;
+      border: 1px solid rgba(20, 184, 166, 0.4);
+    }
+
+    .tag.paired {
+      background: rgba(59, 130, 246, 0.2);
+      color: #93c5fd;
+      border: 1px solid rgba(59, 130, 246, 0.4);
+    }
+
+    .tag.host {
+      background: rgba(16, 185, 129, 0.2);
+      color: #6ee7b7;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+    }
+
+    .device-meta {
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .device-meta span {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .device-status-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--green);
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 6px var(--green);
+    }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 28px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      background: #0d1322;
+      border: 1px dashed #24304f;
+      border-radius: 10px;
+    }
+
+    .empty-icons {
+      display: flex;
+      gap: 12px;
+      color: #475569;
+      margin-bottom: 2px;
+    }
+
+    .empty-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #cbd5e1;
+    }
+
+    .empty-sub {
+      font-size: 12px;
+      color: #64748b;
+      max-width: 400px;
+      line-height: 1.4;
+    }
+
+    /* Endpoints & Links */
+    .endpoints-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
     }
 
     .endpoint-item {
@@ -207,9 +390,9 @@
       align-items: center;
       justify-content: space-between;
       background: #0d1322;
-      padding: 10px 14px;
+      padding: 9px 12px;
       border-radius: 8px;
-      font-size: 13px;
+      font-size: 12px;
       border: 1px solid #1c263e;
     }
 
@@ -220,7 +403,7 @@
     }
 
     .method {
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 700;
       padding: 2px 6px;
       border-radius: 4px;
@@ -257,17 +440,17 @@
       justify-content: space-between;
       align-items: center;
       gap: 12px;
-      margin-top: 6px;
+      margin-top: 4px;
     }
 
     .btn {
       background: #1e293b;
       color: #f8fafc;
       border: 1px solid #334155;
-      padding: 10px 18px;
+      padding: 8px 16px;
       border-radius: 8px;
       cursor: pointer;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 600;
       display: inline-flex;
       align-items: center;
@@ -277,10 +460,6 @@
 
     .btn:hover {
       background: #334155;
-    }
-
-    .btn:active {
-      transform: scale(0.98);
     }
 
     .last-check {
@@ -297,14 +476,14 @@
 </head>
 <body>
   <div class="container">
-    <!-- Main Status Card -->
+    <!-- Main Server Status Banner -->
     <div id="mainCard" class="status-card online">
       <div class="badge-container">
         <span class="pulse-dot"></span>
         <span id="badgeText" class="status-badge-text">Server is Running</span>
       </div>
       <h1 id="mainTitle" class="main-title">Server Online</h1>
-      <p id="subTitle" class="sub-title">The backend server is active, healthy, and accepting incoming connections.</p>
+      <p id="subTitle" class="sub-title">The backend relay server is active, healthy, and accepting incoming connections.</p>
     </div>
 
     <!-- Quick Stats Grid -->
@@ -322,16 +501,47 @@
         <span id="statUptime" class="stat-value">0s</span>
       </div>
       <div class="stat-card">
-        <span class="stat-label">Connected PCs</span>
-        <span id="statPcs" class="stat-value">0</span>
+        <span class="stat-label">Total Devices</span>
+        <span id="statDevicesTotal" class="stat-value">0</span>
       </div>
     </div>
 
-    <!-- Endpoints and Actions Card -->
-    <div class="details-card">
-      <div class="section-title">
-        <span>Available Services</span>
-        <span class="refresh-pill">Auto-refreshes every 3s</span>
+    <!-- Connected Devices Section -->
+    <div class="section-card">
+      <div class="section-header">
+        <div class="section-title">
+          <span>Connected Devices</span>
+          <span id="deviceCountPill" class="device-count-pill">0 Online</span>
+        </div>
+        <span class="refresh-pill">Auto-updating live</span>
+      </div>
+
+      <div id="devicesContainer" class="devices-list">
+        <!-- Rendered dynamically -->
+        <div class="empty-state">
+          <div class="empty-icons">
+            <!-- Laptop silhouette -->
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="3" y="4" width="18" height="12" rx="2" ry="2"/>
+              <line x1="2" y1="20" x2="22" y2="20"/>
+            </svg>
+            <!-- Mobile silhouette -->
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="5" y="2" width="14" height="20" rx="3" ry="3"/>
+              <line x1="12" y1="18" x2="12.01" y2="18"/>
+            </svg>
+          </div>
+          <span class="empty-title">No devices currently connected</span>
+          <span class="empty-sub">Start your PC companion app or open the mobile app to connect. Devices will automatically show up here with live status.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Services & Endpoints -->
+    <div class="section-card">
+      <div class="section-header">
+        <div class="section-title">Available Services</div>
+        <span class="refresh-pill">Endpoints</span>
       </div>
       <div class="endpoints-list">
         <div class="endpoint-item">
@@ -343,26 +553,33 @@
         </div>
         <div class="endpoint-item">
           <div class="endpoint-left">
+            <span class="method get">GET</span>
+            <span class="endpoint-path">/api/devices</span>
+          </div>
+          <a href="/api/devices" target="_blank" class="endpoint-link">Devices JSON &rarr;</a>
+        </div>
+        <div class="endpoint-item">
+          <div class="endpoint-left">
             <span class="method ws">WS</span>
             <span class="endpoint-path">/socket.io/</span>
           </div>
-          <span style="font-size: 12px; color: var(--text-muted);">Relay WebSocket</span>
+          <span style="font-size: 11px; color: var(--text-muted);">Relay WebSocket</span>
         </div>
       </div>
 
-      <div class="action-bar" style="margin-top: 16px;">
+      <div class="action-bar">
         <button id="refreshBtn" class="btn" onclick="checkServer()">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
           </svg>
-          Check Status Now
+          Check Now
         </button>
         <span id="lastCheckText" class="last-check">Checking...</span>
       </div>
     </div>
 
     <div class="footer">
-      ZPC Remote Control Backend Relay &bull; Realtime Monitor
+      ZPC Remote Control Backend Relay &bull; Realtime Device Monitor
     </div>
   </div>
 
@@ -379,6 +596,116 @@
       return `${s}s`;
     }
 
+    function timeAgo(dateString) {
+      if (!dateString) return 'Just now';
+      const past = new Date(dateString).getTime();
+      const diffSec = Math.floor((Date.now() - past) / 1000);
+      if (diffSec < 10) return 'Just now';
+      if (diffSec < 60) return `${diffSec}s ago`;
+      const diffMin = Math.floor(diffSec / 60);
+      if (diffMin < 60) return `${diffMin}m ago`;
+      const diffHr = Math.floor(diffMin / 60);
+      return `${diffHr}h ago`;
+    }
+
+    function renderDevices(devices) {
+      const container = document.getElementById('devicesContainer');
+      const countPill = document.getElementById('deviceCountPill');
+
+      if (!devices || devices.length === 0) {
+        countPill.innerText = '0 Online';
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icons">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="3" y="4" width="18" height="12" rx="2" ry="2"/>
+                <line x1="2" y1="20" x2="22" y2="20"/>
+              </svg>
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="5" y="2" width="14" height="20" rx="3" ry="3"/>
+                <line x1="12" y1="18" x2="12.01" y2="18"/>
+              </svg>
+            </div>
+            <span class="empty-title">No devices currently connected</span>
+            <span class="empty-sub">Start your PC companion app or open the mobile app to connect. Devices will automatically show up here with live status.</span>
+          </div>
+        `;
+        return;
+      }
+
+      countPill.innerText = `${devices.length} ${devices.length === 1 ? 'Device' : 'Devices'} Online`;
+
+      let html = '';
+      devices.forEach(dev => {
+        const isLaptop = (dev.type === 'laptop' || dev.type === 'pc' || dev.role === 'pc');
+
+        if (isLaptop) {
+          html += `
+            <div class="device-card">
+              <div class="device-info-group">
+                <div class="device-icon-box laptop" title="Laptop / PC Host">
+                  <!-- Laptop SVG Icon -->
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="12" rx="2" ry="2"/>
+                    <line x1="2" y1="20" x2="22" y2="20"/>
+                  </svg>
+                </div>
+                <div class="device-details">
+                  <div class="device-title-row">
+                    <span class="device-name">${dev.name || dev.id}</span>
+                    <span class="tag laptop">💻 Laptop / PC</span>
+                    <span class="tag host">Host</span>
+                    ${dev.pairedMobilesCount > 0 ? `<span class="tag paired">📱 ${dev.pairedMobilesCount} Paired</span>` : ''}
+                  </div>
+                  <div class="device-meta">
+                    <span>IP: ${dev.ip || '127.0.0.1'}</span>
+                    <span>&bull;</span>
+                    <span>Connected ${timeAgo(dev.connectedAt)}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="device-status-badge">
+                <span class="live-dot"></span>
+                <span>Active</span>
+              </div>
+            </div>
+          `;
+        } else {
+          html += `
+            <div class="device-card">
+              <div class="device-info-group">
+                <div class="device-icon-box mobile" title="Mobile Device">
+                  <!-- Smartphone SVG Icon -->
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="5" y="2" width="14" height="20" rx="3" ry="3"/>
+                    <line x1="12" y1="18" x2="12.01" y2="18"/>
+                  </svg>
+                </div>
+                <div class="device-details">
+                  <div class="device-title-row">
+                    <span class="device-name">${dev.name || 'Mobile Phone'}</span>
+                    <span class="tag mobile">📱 Mobile</span>
+                    ${dev.pairedWith ? `<span class="tag paired">🔗 Paired to: ${dev.pairedWith}</span>` : '<span class="tag paired">Ready</span>'}
+                  </div>
+                  <div class="device-meta">
+                    <span>IP: ${dev.ip || '127.0.0.1'}</span>
+                    <span>&bull;</span>
+                    <span>Connected ${timeAgo(dev.connectedAt)}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="device-status-badge">
+                <span class="live-dot"></span>
+                <span>Active</span>
+              </div>
+            </div>
+          `;
+        }
+      });
+
+      container.innerHTML = html;
+    }
+
     async function checkServer() {
       const startTime = performance.now();
       const mainCard = document.getElementById('mainCard');
@@ -388,7 +715,7 @@
       const statStatus = document.getElementById('statStatus');
       const statPort = document.getElementById('statPort');
       const statUptime = document.getElementById('statUptime');
-      const statPcs = document.getElementById('statPcs');
+      const statDevicesTotal = document.getElementById('statDevicesTotal');
       const lastCheckText = document.getElementById('lastCheckText');
 
       try {
@@ -406,8 +733,11 @@
           statStatus.style.color = 'var(--green)';
           statPort.innerText = data.port || (window.location.port || '3000');
           statUptime.innerText = formatUptime(data.uptimeSeconds);
-          statPcs.innerText = data.registeredPcs ?? 0;
+          statDevicesTotal.innerText = `${data.totalDevices || 0} (${data.registeredPcs || 0} PC, ${data.connectedMobiles || 0} Mob)`;
           lastCheckText.innerText = `Checked at ${new Date().toLocaleTimeString()} (${latency}ms)`;
+
+          // Render live devices list with laptop & mobile icons
+          renderDevices(data.devices || []);
         } else {
           throw new Error('HTTP ' + response.status);
         }
@@ -426,9 +756,8 @@
     // Initial check
     checkServer();
 
-    // Auto-poll every 3 seconds so user immediately sees if server starts or stops
+    // Auto-poll every 3 seconds for live device updates
     setInterval(checkServer, 3000);
   </script>
 </body>
 </html>
-

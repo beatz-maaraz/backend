@@ -16,15 +16,86 @@ app.use(cors({ origin: '*', methods: ['GET', 'POST'] }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
+function cleanIp(ip) {
+  if (!ip) return '127.0.0.1';
+  if (ip.startsWith('::ffff:')) return ip.replace('::ffff:', '');
+  if (ip === '::1') return '127.0.0.1';
+  return ip;
+}
+
 app.get('/health', (req, res) => {
+  const pcList = Object.keys(registeredPcs).map(id => ({
+    id,
+    name: registeredPcs[id].pcName || id,
+    type: registeredPcs[id].deviceType || 'laptop',
+    role: 'pc',
+    ip: registeredPcs[id].ip,
+    connectedAt: registeredPcs[id].connectedAt,
+    pairedMobilesCount: Object.values(mobilePcMap).filter(pid => pid === id).length,
+  }));
+
+  const mobileList = Object.keys(connectedMobiles).map(id => ({
+    id,
+    name: connectedMobiles[id].deviceName || 'Mobile Device',
+    type: connectedMobiles[id].deviceType || 'mobile',
+    role: 'mobile',
+    pairedWith: connectedMobiles[id].pairedPcId || null,
+    ip: connectedMobiles[id].ip,
+    connectedAt: connectedMobiles[id].connectedAt,
+  }));
+
   res.json({
     status: 'ok',
     uptimeSeconds: Math.floor((Date.now() - serverStartTime) / 1000),
     timestamp: new Date().toISOString(),
-    registeredPcs: Object.keys(registeredPcs).length,
-    connectedMobiles: Object.keys(mobilePcMap).length,
+    registeredPcs: pcList.length,
+    connectedMobiles: mobileList.length,
+    totalDevices: pcList.length + mobileList.length,
     port: PORT,
+    devices: [...pcList, ...mobileList],
   });
+});
+
+app.get('/api/devices', (req, res) => {
+  const pcList = Object.keys(registeredPcs).map(id => ({
+    id,
+    name: registeredPcs[id].pcName || id,
+    type: registeredPcs[id].deviceType || 'laptop',
+    role: 'pc',
+    ip: registeredPcs[id].ip,
+    connectedAt: registeredPcs[id].connectedAt,
+  }));
+
+  const mobileList = Object.keys(connectedMobiles).map(id => ({
+    id,
+    name: connectedMobiles[id].deviceName || 'Mobile Device',
+    type: connectedMobiles[id].deviceType || 'mobile',
+    role: 'mobile',
+    pairedWith: connectedMobiles[id].pairedPcId || null,
+    ip: connectedMobiles[id].ip,
+    connectedAt: connectedMobiles[id].connectedAt,
+  }));
+
+  res.json({
+    status: 'ok',
+    total: pcList.length + mobileList.length,
+    devices: [...pcList, ...mobileList]
+  });
+});
+
+// Endpoint to list online PCs for mobile auto-discovery
+app.get('/pcs', (req, res) => {
+  const pcs = Object.keys(registeredPcs).map(id => ({
+    id,
+    pcName: registeredPcs[id].pcName || id,
+    version: registeredPcs[id].version || '2.0',
+    connectedAt: registeredPcs[id].connectedAt || new Date().toISOString(),
+  }));
+  res.json({ status: 'ok', pcs, count: pcs.length });
+});
+
+app.get('/api/pcs', (req, res) => {
+  res.redirect('/pcs');
 });
 
 app.get('/', (req, res) => {
@@ -50,11 +121,14 @@ app.get('/', (req, res) => {
 // For LAN use:  Just connect Flutter directly to  ws://<PC_IP>:8080
 // ---------------------------------------------------------------------------
 
-/** @type {{ [pcId: string]: { socket: import('socket.io').Socket } }} */
+/** @type {{ [pcId: string]: { socket: import('socket.io').Socket, pcName: string, deviceType: string, version: string, ip: string, connectedAt: string } }} */
 const registeredPcs = {};
 
 /** @type {{ [mobileSocketId: string]: string }} */  // mobileId -> pcId
 const mobilePcMap = {};
+
+/** @type {{ [mobileSocketId: string]: { socket: import('socket.io').Socket, deviceName: string, deviceType: string, pairedPcId: string, ip: string, connectedAt: string } }} */
+const connectedMobiles = {};
 
 // ---------------------------------------------------------------------------
 // Socket.io
@@ -65,67 +139,154 @@ const io = new Server(server, {
 });
 
 io.on('connection', (socket) => {
-  const clientIp = socket.handshake.address;
+  const clientIp = cleanIp(socket.handshake.address);
   console.log(`[+] Connected: ID=${socket.id} (IP: ${clientIp})`);
 
   // ---- PC registers itself as available for relay ----
-  // Emitted by the PC companion / C++ bridge
-  // payload: { pcId: string }
-  socket.on('pc-register', (data) => {
-    const pcId = (data && data.pcId) ? String(data.pcId) : socket.id;
-    registeredPcs[pcId] = { socket };
+  // Supports both 'pc-register' and 'register_pc'
+  const handlePcRegister = (data) => {
+    const pcId = (data && (data.pcId || data.roomId)) ? String(data.pcId || data.roomId) : socket.id;
+    const pcName = (data && (data.pcName || data.name || data.deviceName)) 
+      ? String(data.pcName || data.name || data.deviceName) 
+      : (pcId.startsWith('pc-') ? pcId : `PC (${pcId.slice(0, 6)})`);
+    const deviceType = (data && (data.deviceType || data.type)) 
+      ? String(data.deviceType || data.type).toLowerCase() 
+      : 'laptop';
+    const version = (data && data.version) ? String(data.version) : '2.0';
+    
+    registeredPcs[pcId] = {
+      socket,
+      pcName,
+      deviceType,
+      version,
+      ip: clientIp,
+      connectedAt: new Date().toISOString(),
+    };
     socket.data.role = 'pc';
     socket.data.pcId = pcId;
-    socket.emit('pc-registered', { pcId });
-    console.log(`[PC ] Registered with ID: ${pcId}`);
-  });
+
+    // Emit both confirmations for compatibility
+    socket.emit('pc-registered', { pcId, roomId: pcId });
+    socket.emit('registered', { pcId, roomId: pcId });
+    console.log(`[PC ] Registered: ID=${pcId} Name="${pcName}" Type="${deviceType}"`);
+  };
+
+  socket.on('pc-register', handlePcRegister);
+  socket.on('register_pc', handlePcRegister);
+  socket.on('register', handlePcRegister);
 
   // ---- Mobile connects and selects a PC to relay through ----
-  // payload: { pcId: string }
-  socket.on('mobile-connect', (data) => {
-    const pcId = data && data.pcId;
-    if (!pcId || !registeredPcs[pcId]) {
-      socket.emit('error', { message: `PC not found: ${pcId}` });
+  // Supports both 'mobile-connect' and 'connect_pc' / 'join_room'
+  const handleMobileConnect = (data) => {
+    const requestedId = (data && (data.pcId || data.roomId)) ? String(data.pcId || data.roomId) : null;
+    let targetPcId = requestedId;
+
+    // If requestedId not exact match, try case-insensitive or partial match
+    if (targetPcId && !registeredPcs[targetPcId]) {
+      const lower = targetPcId.toLowerCase();
+      const match = Object.keys(registeredPcs).find(k => k.toLowerCase() === lower);
+      if (match) targetPcId = match;
+    }
+
+    if (!targetPcId || !registeredPcs[targetPcId]) {
+      socket.emit('error', {
+        message: `PC not found: ${requestedId}`,
+        availablePcs: Object.keys(registeredPcs)
+      });
       return;
     }
-    mobilePcMap[socket.id] = pcId;
+
+    const deviceName = (data && (data.deviceName || data.name || data.model))
+      ? String(data.deviceName || data.name || data.model)
+      : `Mobile (${socket.id.slice(0, 5)})`;
+    const deviceType = (data && (data.deviceType || data.type))
+      ? String(data.deviceType || data.type).toLowerCase()
+      : 'mobile';
+
+    mobilePcMap[socket.id] = targetPcId;
+    connectedMobiles[socket.id] = {
+      socket,
+      deviceName,
+      deviceType,
+      pairedPcId: targetPcId,
+      ip: clientIp,
+      connectedAt: new Date().toISOString(),
+    };
+
     socket.data.role = 'mobile';
-    socket.emit('mobile-connected', { pcId });
-    console.log(`[MOB] ${socket.id} paired with PC ${pcId}`);
-  });
+    socket.data.pairedPcId = targetPcId;
+
+    socket.emit('mobile-connected', { pcId: targetPcId, roomId: targetPcId });
+    socket.emit('joined', { pcId: targetPcId, roomId: targetPcId });
+    
+    // Notify PC that a mobile client joined
+    try {
+      registeredPcs[targetPcId].socket.emit('mobile_joined', { 
+        mobileId: socket.id,
+        deviceName,
+        deviceType
+      });
+    } catch (_) {}
+
+    console.log(`[MOB] ${socket.id} ("${deviceName}") paired with PC ${targetPcId}`);
+  };
+
+  socket.on('mobile-connect', handleMobileConnect);
+  socket.on('connect_pc', handleMobileConnect);
+  socket.on('join_room', handleMobileConnect);
 
   // ---- Relay: mobile -> PC (all control events) ----
-  // The mobile app sends typed events; forward them to the paired PC.
-
   const relayToPc = (eventName, data) => {
     const pcId = mobilePcMap[socket.id];
     if (!pcId || !registeredPcs[pcId]) return;
-    registeredPcs[pcId].socket.emit(eventName, data);
+    try {
+      registeredPcs[pcId].socket.emit(eventName, data);
+    } catch (err) {
+      console.error(`[ERR] Relay error for ${eventName}:`, err.message);
+    }
   };
 
   socket.on('trackpad-move',  (d) => relayToPc('trackpad-move', d));
   socket.on('mouse-click',    (d) => relayToPc('mouse-click',   d));
   socket.on('mouse-scroll',   (d) => relayToPc('mouse-scroll',  d));
-  socket.on('volume-change',  (d) => {
-    console.log(`[VOL] from ${socket.id}:`, d);
-    relayToPc('volume-change', d);
-  });
-  socket.on('control-event',  (d) => {
-    console.log(`[CTL] from ${socket.id}:`, d);
-    relayToPc('control-event', d);
-  });
+  socket.on('volume-change',  (d) => relayToPc('volume-change', d));
+  socket.on('control-event',  (d) => relayToPc('control-event', d));
+  socket.on('command',        (d) => relayToPc('command',       d));
 
-  // ---- Relay: PC -> mobile (state updates, responses) ----
+  // Forward custom direct commands
+  socket.on('MOUSE_MOVE',     (d) => relayToPc('trackpad-move', d));
+  socket.on('MOUSE_CLICK',    (d) => relayToPc('mouse-click',   d));
+  socket.on('MOUSE_SCROLL',   (d) => relayToPc('mouse-scroll',  d));
+  socket.on('VOLUME_SET',     (d) => relayToPc('volume-change', d));
+  socket.on('SYSTEM_POWER',   (d) => relayToPc('control-event', { action: d?.action, ...d }));
+  socket.on('APP_ACTION',     (d) => relayToPc('control-event', d));
+  socket.on('APP_LIST',       (d) => relayToPc('control-event', { action: 'get_apps', ...d }));
+  socket.on('KEYBOARD_INPUT', (d) => relayToPc('control-event', { action: 'type_text', ...d }));
+
+  // ---- Relay: PC -> mobile (state updates, command results) ----
   socket.on('pc-state', (data) => {
-    // PC broadcasts its state to any paired mobile clients
     const pcId = socket.data.pcId;
     if (!pcId) return;
-    // Find all mobiles paired with this PC and emit to them
     for (const [mobileId, pid] of Object.entries(mobilePcMap)) {
       if (pid === pcId) {
         io.to(mobileId).emit('pc-state', data);
       }
     }
+  });
+
+  socket.on('command_result', (data) => {
+    const pcId = socket.data.pcId;
+    if (!pcId) return;
+    for (const [mobileId, pid] of Object.entries(mobilePcMap)) {
+      if (pid === pcId) {
+        io.to(mobileId).emit('command_result', data);
+      }
+    }
+  });
+
+  // Keepalive ping / pong
+  socket.on('ping', (data) => {
+    socket.emit('pong', { time: Date.now() });
   });
 
   // ---- Disconnection ----
@@ -136,11 +297,24 @@ io.on('connection', (socket) => {
     if (role === 'pc') {
       const pcId = socket.data.pcId;
       if (pcId) {
+        // Notify any paired mobiles that the PC disconnected
+        for (const [mobileId, pid] of Object.entries(mobilePcMap)) {
+          if (pid === pcId) {
+            io.to(mobileId).emit('pc_disconnected', { pcId });
+          }
+        }
         delete registeredPcs[pcId];
         console.log(`[PC ] Unregistered: ${pcId}`);
       }
     } else if (role === 'mobile') {
+      const pcId = mobilePcMap[socket.id];
+      if (pcId && registeredPcs[pcId]) {
+        try {
+          registeredPcs[pcId].socket.emit('mobile_left', { mobileId: socket.id });
+        } catch (_) {}
+      }
       delete mobilePcMap[socket.id];
+      delete connectedMobiles[socket.id];
     }
   });
 });
