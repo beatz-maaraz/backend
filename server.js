@@ -111,6 +111,7 @@ app.get('/health', (req, res) => {
     port: PORT,
     serverIp: getLocalIp(),
     devices: [...pcList, ...mobileList],
+    logs: connectionLogs.slice(-25),
   });
 });
 
@@ -149,7 +150,8 @@ app.get('/api/devices', (req, res) => {
     serverIp: getLocalIp(),
     port: PORT,
     total: pcList.length + mobileList.length,
-    devices: [...pcList, ...mobileList]
+    devices: [...pcList, ...mobileList],
+    logs: connectionLogs.slice(-25),
   });
 });
 
@@ -265,17 +267,38 @@ const mobilePcMap = {};
 /** @type {{ [mobileSocketId: string]: { socket: import('socket.io').Socket, deviceName: string, deviceType: string, pairedPcId: string, ip: string, connectedAt: string } }} */
 const connectedMobiles = {};
 
+const connectionLogs = [];
+
+function logEvent(type, message, details = {}) {
+  const entry = {
+    time: new Date().toLocaleTimeString(),
+    type, // 'connect' | 'disconnect' | 'relay' | 'error' | 'pair'
+    message,
+    details,
+    timestamp: Date.now(),
+  };
+  connectionLogs.push(entry);
+  if (connectionLogs.length > 50) connectionLogs.shift();
+  console.log(`[${type.toUpperCase().padEnd(5)}] ${message}`);
+}
+
 // ---------------------------------------------------------------------------
 // Socket.io
 // ---------------------------------------------------------------------------
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: { origin: '*', methods: ['GET', 'POST'] },
+  transports: ['websocket', 'polling'],
+  pingTimeout: 60000,
+  pingInterval: 25000,
+  connectTimeout: 45000,
+  allowEIO3: true,
+  maxHttpBufferSize: 1e7,
 });
 
 io.on('connection', (socket) => {
   const clientIp = formatFullIp(socket.handshake.address);
-  console.log(`[+] Connected: ID=${socket.id} (IP: ${clientIp})`);
+  logEvent('connect', `Socket connected: ${socket.id} (IP: ${clientIp})`, { id: socket.id, ip: clientIp });
 
   // Detect pre-configured mobile clients via query string
   const query = socket.handshake.query || {};
