@@ -4,10 +4,12 @@ const cors = require('cors');
 const { Server } = require('socket.io');
 const net = require('net');
 const path = require('path');
+const { spawn } = require('child_process');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const serverStartTime = Date.now();
+let serverStartTime = Date.now();
+let isRestarting = false;
 
 // ---------------------------------------------------------------------------
 // Express middleware & static files
@@ -26,6 +28,7 @@ function cleanIp(ip) {
 app.get('/health', (req, res) => {
   const pcList = Object.keys(registeredPcs).map(id => ({
     id,
+    roomId: id,
     name: registeredPcs[id].pcName || id,
     type: registeredPcs[id].deviceType || 'laptop',
     role: 'pc',
@@ -34,15 +37,23 @@ app.get('/health', (req, res) => {
     pairedMobilesCount: Object.values(mobilePcMap).filter(pid => pid === id).length,
   }));
 
-  const mobileList = Object.keys(connectedMobiles).map(id => ({
-    id,
-    name: connectedMobiles[id].deviceName || 'Mobile Device',
-    type: connectedMobiles[id].deviceType || 'mobile',
-    role: 'mobile',
-    pairedWith: connectedMobiles[id].pairedPcId || null,
-    ip: connectedMobiles[id].ip,
-    connectedAt: connectedMobiles[id].connectedAt,
-  }));
+  const mobileList = Object.keys(connectedMobiles).map(id => {
+    const pairedId = connectedMobiles[id].pairedPcId || mobilePcMap[id] || null;
+    const pairedPc = pairedId && registeredPcs[pairedId];
+    const devName = connectedMobiles[id].deviceName || 'Mobile Device';
+    return {
+      id,
+      name: devName,
+      mobileName: devName,
+      type: connectedMobiles[id].deviceType || 'mobile',
+      role: 'mobile',
+      roomId: pairedId,
+      pairedWith: pairedId,
+      pairedPcName: pairedPc ? (pairedPc.pcName || pairedId) : (pairedId ? `Room #${pairedId}` : null),
+      ip: connectedMobiles[id].ip,
+      connectedAt: connectedMobiles[id].connectedAt,
+    };
+  });
 
   res.json({
     status: 'ok',
@@ -59,22 +70,32 @@ app.get('/health', (req, res) => {
 app.get('/api/devices', (req, res) => {
   const pcList = Object.keys(registeredPcs).map(id => ({
     id,
+    roomId: id,
     name: registeredPcs[id].pcName || id,
     type: registeredPcs[id].deviceType || 'laptop',
     role: 'pc',
     ip: registeredPcs[id].ip,
     connectedAt: registeredPcs[id].connectedAt,
+    pairedMobilesCount: Object.values(mobilePcMap).filter(pid => pid === id).length,
   }));
 
-  const mobileList = Object.keys(connectedMobiles).map(id => ({
-    id,
-    name: connectedMobiles[id].deviceName || 'Mobile Device',
-    type: connectedMobiles[id].deviceType || 'mobile',
-    role: 'mobile',
-    pairedWith: connectedMobiles[id].pairedPcId || null,
-    ip: connectedMobiles[id].ip,
-    connectedAt: connectedMobiles[id].connectedAt,
-  }));
+  const mobileList = Object.keys(connectedMobiles).map(id => {
+    const pairedId = connectedMobiles[id].pairedPcId || mobilePcMap[id] || null;
+    const pairedPc = pairedId && registeredPcs[pairedId];
+    const devName = connectedMobiles[id].deviceName || 'Mobile Device';
+    return {
+      id,
+      name: devName,
+      mobileName: devName,
+      type: connectedMobiles[id].deviceType || 'mobile',
+      role: 'mobile',
+      roomId: pairedId,
+      pairedWith: pairedId,
+      pairedPcName: pairedPc ? (pairedPc.pcName || pairedId) : (pairedId ? `Room #${pairedId}` : null),
+      ip: connectedMobiles[id].ip,
+      connectedAt: connectedMobiles[id].connectedAt,
+    };
+  });
 
   res.json({
     status: 'ok',
@@ -96,6 +117,71 @@ app.get('/pcs', (req, res) => {
 
 app.get('/api/pcs', (req, res) => {
   res.redirect('/pcs');
+});
+
+// Reset server state without killing the process
+app.post('/api/reset', (req, res) => {
+  console.log('[!] Server state reset requested');
+  try {
+    io.disconnectSockets(true);
+  } catch (_) {}
+
+  for (const key of Object.keys(registeredPcs)) delete registeredPcs[key];
+  for (const key of Object.keys(mobilePcMap)) delete mobilePcMap[key];
+  for (const key of Object.keys(connectedMobiles)) delete connectedMobiles[key];
+
+  serverStartTime = Date.now();
+
+  res.json({
+    status: 'ok',
+    message: 'Server state and connected devices reset successfully',
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Full server process restart
+app.post('/api/restart', (req, res) => {
+  if (isRestarting) {
+    return res.status(429).json({ status: 'error', message: 'Server is already restarting' });
+  }
+  isRestarting = true;
+  console.log('[!] Server process restart requested');
+
+  res.json({
+    status: 'ok',
+    message: 'Server is restarting now. Reconnecting shortly...'
+  });
+
+  // Disconnect sockets and gracefully trigger restart
+  setTimeout(() => {
+    try {
+      io.disconnectSockets(true);
+    } catch (_) {}
+
+    server.close(() => {
+      console.log('[*] Closed HTTP server. Spawning new process...');
+      const child = spawn(process.execPath, process.argv.slice(1), {
+        cwd: process.cwd(),
+        detached: true,
+        stdio: 'ignore',
+        env: process.env,
+      });
+      child.unref();
+      process.exit(0);
+    });
+
+    // Fallback exit after 1.5s if keepalive sockets delay server.close()
+    setTimeout(() => {
+      const child = spawn(process.execPath, process.argv.slice(1), {
+        cwd: process.cwd(),
+        detached: true,
+        stdio: 'ignore',
+        env: process.env,
+      });
+      child.unref();
+      process.exit(0);
+    }, 1500);
+  }, 300);
 });
 
 app.get('/', (req, res) => {
@@ -142,6 +228,25 @@ io.on('connection', (socket) => {
   const clientIp = cleanIp(socket.handshake.address);
   console.log(`[+] Connected: ID=${socket.id} (IP: ${clientIp})`);
 
+  // Detect pre-configured mobile clients via query string
+  const query = socket.handshake.query || {};
+  if (query.role === 'mobile' || query.mobileName || query.deviceName) {
+    const devName = String(query.mobileName || query.deviceName || query.name || query.model || `Mobile (${socket.id.slice(0, 5)})`);
+    const devType = String(query.deviceType || 'mobile').toLowerCase();
+    const roomId = query.roomId || query.pcId || null;
+    connectedMobiles[socket.id] = {
+      socket,
+      deviceName: devName,
+      deviceType: devType,
+      pairedPcId: roomId,
+      ip: clientIp,
+      connectedAt: new Date().toISOString(),
+    };
+    socket.data.role = 'mobile';
+    socket.data.deviceName = devName;
+    if (roomId) mobilePcMap[socket.id] = roomId;
+  }
+
   // ---- PC registers itself as available for relay ----
   // Supports both 'pc-register' and 'register_pc'
   const handlePcRegister = (data) => {
@@ -175,8 +280,8 @@ io.on('connection', (socket) => {
   socket.on('register_pc', handlePcRegister);
   socket.on('register', handlePcRegister);
 
-  // ---- Mobile connects and selects a PC to relay through ----
-  // Supports both 'mobile-connect' and 'connect_pc' / 'join_room'
+  // ---- Mobile connects and selects a PC / Room to relay through ----
+  // Supports 'mobile-connect', 'connect_pc', 'join_room', 'register_mobile'
   const handleMobileConnect = (data) => {
     const requestedId = (data && (data.pcId || data.roomId)) ? String(data.pcId || data.roomId) : null;
     let targetPcId = requestedId;
@@ -190,15 +295,15 @@ io.on('connection', (socket) => {
 
     if (!targetPcId || !registeredPcs[targetPcId]) {
       socket.emit('error', {
-        message: `PC not found: ${requestedId}`,
-        availablePcs: Object.keys(registeredPcs)
+        message: `PC / Room not found: ${requestedId}`,
+        availableRooms: Object.keys(registeredPcs)
       });
       return;
     }
 
-    const deviceName = (data && (data.deviceName || data.name || data.model))
-      ? String(data.deviceName || data.name || data.model)
-      : `Mobile (${socket.id.slice(0, 5)})`;
+    const deviceName = (data && (data.mobileName || data.deviceName || data.name || data.model))
+      ? String(data.mobileName || data.deviceName || data.name || data.model)
+      : (socket.data.deviceName || `Mobile (${socket.id.slice(0, 5)})`);
     const deviceType = (data && (data.deviceType || data.type))
       ? String(data.deviceType || data.type).toLowerCase()
       : 'mobile';
@@ -210,11 +315,12 @@ io.on('connection', (socket) => {
       deviceType,
       pairedPcId: targetPcId,
       ip: clientIp,
-      connectedAt: new Date().toISOString(),
+      connectedAt: (connectedMobiles[socket.id] && connectedMobiles[socket.id].connectedAt) || new Date().toISOString(),
     };
 
     socket.data.role = 'mobile';
     socket.data.pairedPcId = targetPcId;
+    socket.data.deviceName = deviceName;
 
     socket.emit('mobile-connected', { pcId: targetPcId, roomId: targetPcId });
     socket.emit('joined', { pcId: targetPcId, roomId: targetPcId });
@@ -223,17 +329,33 @@ io.on('connection', (socket) => {
     try {
       registeredPcs[targetPcId].socket.emit('mobile_joined', { 
         mobileId: socket.id,
+        mobileName: deviceName,
         deviceName,
-        deviceType
+        deviceType,
+        roomId: targetPcId
       });
     } catch (_) {}
 
-    console.log(`[MOB] ${socket.id} ("${deviceName}") paired with PC ${targetPcId}`);
+    console.log(`[MOB] ${socket.id} ("${deviceName}") paired with Room / PC "${targetPcId}"`);
   };
 
   socket.on('mobile-connect', handleMobileConnect);
   socket.on('connect_pc', handleMobileConnect);
   socket.on('join_room', handleMobileConnect);
+  socket.on('register_mobile', handleMobileConnect);
+  socket.on('mobile-register', handleMobileConnect);
+
+  // Allow setting or updating device name dynamically
+  socket.on('set_device_name', (data) => {
+    if (data && (data.name || data.deviceName || data.mobileName)) {
+      const newName = String(data.name || data.deviceName || data.mobileName);
+      if (socket.data.role === 'pc' && socket.data.pcId && registeredPcs[socket.data.pcId]) {
+        registeredPcs[socket.data.pcId].pcName = newName;
+      } else if (connectedMobiles[socket.id]) {
+        connectedMobiles[socket.id].deviceName = newName;
+      }
+    }
+  });
 
   // ---- Relay: mobile -> PC (all control events) ----
   const relayToPc = (eventName, data) => {

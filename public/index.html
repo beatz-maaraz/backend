@@ -18,6 +18,9 @@
       --accent: #3b82f6;
       --purple: #8b5cf6;
       --teal: #14b8a6;
+      --amber: #f59e0b;
+      --amber-glow: rgba(245, 158, 11, 0.3);
+      --cyan: #06b6d4;
     }
 
     * {
@@ -36,11 +39,12 @@
       align-items: center;
       justify-content: center;
       padding: 32px 16px;
+      position: relative;
     }
 
     .container {
       width: 100%;
-      max-width: 720px;
+      max-width: 760px;
       display: flex;
       flex-direction: column;
       gap: 20px;
@@ -168,38 +172,126 @@
       word-break: break-all;
     }
 
+    /* Server Actions Card */
+    .control-card {
+      background: linear-gradient(180deg, #18223a 0%, #151d30 100%);
+      border: 1px solid #2d3b5e;
+      border-radius: 14px;
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .control-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .control-title {
+      font-size: 14px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #e2e8f0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .buttons-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 10px 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      outline: none;
+      border: none;
+      user-select: none;
+    }
+
+    .btn:active {
+      transform: scale(0.97);
+    }
+
+    .btn-restart {
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(245, 158, 11, 0.2) 100%);
+      border: 1px solid rgba(245, 158, 11, 0.5);
+      color: #fbbf24;
+    }
+
+    .btn-restart:hover {
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.35) 0%, rgba(245, 158, 11, 0.35) 100%);
+      border-color: #f59e0b;
+      box-shadow: 0 0 16px var(--amber-glow);
+    }
+
+    .btn-reset {
+      background: rgba(99, 102, 241, 0.15);
+      border: 1px solid rgba(99, 102, 241, 0.4);
+      color: #a5b4fc;
+    }
+
+    .btn-reset:hover {
+      background: rgba(99, 102, 241, 0.25);
+      border-color: #818cf8;
+      box-shadow: 0 0 16px rgba(99, 102, 241, 0.25);
+    }
+
+    .btn-check {
+      background: #1e293b;
+      color: #f8fafc;
+      border: 1px solid #334155;
+    }
+
+    .btn-check:hover {
+      background: #334155;
+      border-color: #475569;
+    }
+
     /* Connected Devices Section */
     .section-card {
       background: var(--card-bg);
       border: 1px solid var(--card-border);
       border-radius: 14px;
-      padding: 20px;
+      padding: 22px;
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 16px;
     }
 
     .section-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 14px;
     }
 
     .section-title {
-      font-size: 15px;
+      font-size: 16px;
       font-weight: 700;
       color: #ffffff;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
     }
 
     .device-count-pill {
       font-size: 11px;
       font-weight: 700;
-      padding: 3px 10px;
+      padding: 3px 12px;
       border-radius: 20px;
       background: rgba(59, 130, 246, 0.15);
       color: var(--accent);
@@ -212,39 +304,169 @@
       color: var(--text-muted);
     }
 
-    /* Device Cards */
-    .devices-list {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .device-card {
+    /* Active Connection Flow Graphic */
+    .connection-flow-banner {
+      background: linear-gradient(90deg, rgba(20, 184, 166, 0.12) 0%, rgba(59, 130, 246, 0.15) 50%, rgba(139, 92, 246, 0.12) 100%);
+      border: 1px solid rgba(59, 130, 246, 0.35);
+      border-radius: 12px;
+      padding: 14px 18px;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .flow-node {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .flow-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .flow-icon.mobile {
+      background: rgba(20, 184, 166, 0.25);
+      color: #2dd4bf;
+      border: 1px solid rgba(20, 184, 166, 0.5);
+    }
+
+    .flow-icon.pc {
+      background: rgba(139, 92, 246, 0.25);
+      color: #c084fc;
+      border: 1px solid rgba(139, 92, 246, 0.5);
+    }
+
+    .flow-meta {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .flow-meta .name {
+      font-size: 13px;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .flow-meta .sub {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .flow-link {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      flex-grow: 1;
+      max-width: 220px;
+      padding: 0 10px;
+    }
+
+    .flow-room-badge {
+      background: rgba(245, 158, 11, 0.2);
+      border: 1px solid rgba(245, 158, 11, 0.5);
+      color: #fcd34d;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      letter-spacing: 0.3px;
+    }
+
+    .flow-line {
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, #14b8a6, #3b82f6, #8b5cf6);
+      position: relative;
+      border-radius: 2px;
+      margin-top: 4px;
+    }
+
+    .flow-pulse {
+      position: absolute;
+      top: -3px;
+      left: 0;
+      width: 8px;
+      height: 8px;
+      background: #ffffff;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #ffffff;
+      animation: signalMove 2s infinite ease-in-out;
+    }
+
+    @keyframes signalMove {
+      0% { left: 0%; opacity: 0; }
+      20% { opacity: 1; }
+      80% { opacity: 1; }
+      100% { left: 100%; opacity: 0; }
+    }
+
+    /* Device Cards Container */
+    .devices-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .device-card {
       background: #0d1322;
-      border: 1px solid #1c263e;
-      border-radius: 10px;
-      padding: 14px 16px;
-      transition: border-color 0.2s ease, transform 0.15s ease;
+      border: 1px solid #1e293f;
+      border-radius: 12px;
+      padding: 16px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: all 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .device-card::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+    }
+
+    .device-card.laptop-card::before {
+      background: #8b5cf6;
+    }
+
+    .device-card.mobile-card::before {
+      background: #14b8a6;
     }
 
     .device-card:hover {
-      border-color: #2a3a5c;
-      transform: translateY(-1px);
+      border-color: #3b82f6;
+      background: #111a2e;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
     }
 
     .device-info-group {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 16px;
     }
 
     .device-icon-box {
-      width: 44px;
-      height: 44px;
-      border-radius: 10px;
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -253,20 +475,20 @@
 
     .device-icon-box.laptop {
       background: rgba(139, 92, 246, 0.15);
-      border: 1px solid rgba(139, 92, 246, 0.35);
+      border: 1px solid rgba(139, 92, 246, 0.4);
       color: #c084fc;
     }
 
     .device-icon-box.mobile {
       background: rgba(20, 184, 166, 0.15);
-      border: 1px solid rgba(20, 184, 166, 0.35);
+      border: 1px solid rgba(20, 184, 166, 0.4);
       color: #2dd4bf;
     }
 
     .device-details {
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 6px;
     }
 
     .device-title-row {
@@ -276,18 +498,22 @@
       flex-wrap: wrap;
     }
 
-    .device-name {
-      font-size: 15px;
-      font-weight: 700;
+    .device-name-title {
+      font-size: 16px;
+      font-weight: 800;
       color: #ffffff;
+      letter-spacing: -0.2px;
     }
 
     .tag {
       font-size: 11px;
-      font-weight: 600;
-      padding: 2px 8px;
-      border-radius: 4px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
       letter-spacing: 0.3px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
     }
 
     .tag.laptop {
@@ -302,7 +528,18 @@
       border: 1px solid rgba(20, 184, 166, 0.4);
     }
 
-    .tag.paired {
+    .tag.room {
+      background: rgba(245, 158, 11, 0.18);
+      color: #fbbf24;
+      border: 1px solid rgba(245, 158, 11, 0.45);
+      cursor: pointer;
+    }
+
+    .tag.room:hover {
+      background: rgba(245, 158, 11, 0.28);
+    }
+
+    .tag.paired-host {
       background: rgba(59, 130, 246, 0.2);
       color: #93c5fd;
       border: 1px solid rgba(59, 130, 246, 0.4);
@@ -319,7 +556,8 @@
       color: var(--text-muted);
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
+      flex-wrap: wrap;
     }
 
     .device-meta span {
@@ -330,10 +568,17 @@
 
     .device-status-badge {
       display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
+    }
+
+    .status-indicator {
+      display: flex;
       align-items: center;
       gap: 6px;
       font-size: 12px;
-      font-weight: 600;
+      font-weight: 700;
       color: var(--green);
     }
 
@@ -342,40 +587,45 @@
       height: 8px;
       border-radius: 50%;
       background: var(--green);
-      box-shadow: 0 0 6px var(--green);
+      box-shadow: 0 0 8px var(--green);
+    }
+
+    .device-badge-sub {
+      font-size: 11px;
+      color: #64748b;
     }
 
     /* Empty state */
     .empty-state {
       text-align: center;
-      padding: 28px 16px;
+      padding: 32px 20px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
       background: #0d1322;
       border: 1px dashed #24304f;
-      border-radius: 10px;
+      border-radius: 12px;
     }
 
     .empty-icons {
       display: flex;
-      gap: 12px;
+      gap: 16px;
       color: #475569;
-      margin-bottom: 2px;
+      margin-bottom: 4px;
     }
 
     .empty-title {
-      font-size: 14px;
-      font-weight: 600;
+      font-size: 15px;
+      font-weight: 700;
       color: #cbd5e1;
     }
 
     .empty-sub {
-      font-size: 12px;
+      font-size: 13px;
       color: #64748b;
-      max-width: 400px;
-      line-height: 1.4;
+      max-width: 440px;
+      line-height: 1.5;
     }
 
     /* Endpoints & Links */
@@ -414,6 +664,11 @@
       color: #34d399;
     }
 
+    .method.post {
+      background: #78350f;
+      color: #fcd34d;
+    }
+
     .method.ws {
       background: #4c1d95;
       color: #c084fc;
@@ -435,33 +690,6 @@
       text-decoration: underline;
     }
 
-    .action-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      margin-top: 4px;
-    }
-
-    .btn {
-      background: #1e293b;
-      color: #f8fafc;
-      border: 1px solid #334155;
-      padding: 8px 16px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 12px;
-      font-weight: 600;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: background 0.2s;
-    }
-
-    .btn:hover {
-      background: #334155;
-    }
-
     .last-check {
       font-size: 12px;
       color: var(--text-muted);
@@ -471,6 +699,99 @@
       text-align: center;
       font-size: 12px;
       color: #64748b;
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #1e293b;
+      color: #ffffff;
+      padding: 12px 24px;
+      border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+      border: 1px solid #334155;
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 999;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    /* Fullscreen Restart Overlay */
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(11, 15, 25, 0.88);
+      backdrop-filter: blur(8px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .overlay.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .overlay-box {
+      background: var(--card-bg);
+      border: 2px solid var(--amber);
+      border-radius: 18px;
+      padding: 36px 32px;
+      text-align: center;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7), 0 0 40px var(--amber-glow);
+      max-width: 440px;
+      width: 90%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .spinner {
+      width: 48px;
+      height: 48px;
+      border: 4px solid rgba(245, 158, 11, 0.2);
+      border-top-color: var(--amber);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .overlay-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: #ffffff;
+    }
+
+    .overlay-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.5;
     }
   </style>
 </head>
@@ -506,33 +827,79 @@
       </div>
     </div>
 
+    <!-- Server Controls & Restart Actions Card -->
+    <div class="control-card">
+      <div class="control-header">
+        <span class="control-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+            <line x1="8" y1="21" x2="16" y2="21"/>
+            <line x1="12" y1="17" x2="12" y2="21"/>
+          </svg>
+          Server Controls
+        </span>
+        <span id="lastCheckText" class="last-check">Checking...</span>
+      </div>
+
+      <div class="buttons-row">
+        <!-- Restart Server Button -->
+        <button id="restartBtn" class="btn btn-restart" onclick="confirmRestart()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+          </svg>
+          Restart Server
+        </button>
+
+        <!-- Reset State Button -->
+        <button id="resetBtn" class="btn btn-reset" onclick="confirmReset()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
+            <path d="M21 3v5h-5"/>
+            <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/>
+            <path d="M3 21v-5h5"/>
+          </svg>
+          Reset Connections & State
+        </button>
+
+        <!-- Refresh Health Button -->
+        <button id="refreshBtn" class="btn btn-check" onclick="checkServer()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+            <polyline points="22 4 12 14.01 9 11.01"/>
+          </svg>
+          Check Status
+        </button>
+      </div>
+    </div>
+
     <!-- Connected Devices Section -->
     <div class="section-card">
       <div class="section-header">
         <div class="section-title">
-          <span>Connected Devices</span>
+          <span>Connected Devices & Rooms</span>
           <span id="deviceCountPill" class="device-count-pill">0 Online</span>
         </div>
-        <span class="refresh-pill">Auto-updating live</span>
+        <span class="refresh-pill">Live Synced</span>
       </div>
+
+      <!-- Active Connection Flow Banner (Visible when both PC and Mobile are connected) -->
+      <div id="connectionFlowBanner" style="display: none;"></div>
 
       <div id="devicesContainer" class="devices-list">
         <!-- Rendered dynamically -->
         <div class="empty-state">
           <div class="empty-icons">
-            <!-- Laptop silhouette -->
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
               <rect x="3" y="4" width="18" height="12" rx="2" ry="2"/>
               <line x1="2" y1="20" x2="22" y2="20"/>
             </svg>
-            <!-- Mobile silhouette -->
             <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
               <rect x="5" y="2" width="14" height="20" rx="3" ry="3"/>
               <line x1="12" y1="18" x2="12.01" y2="18"/>
             </svg>
           </div>
           <span class="empty-title">No devices currently connected</span>
-          <span class="empty-sub">Start your PC companion app or open the mobile app to connect. Devices will automatically show up here with live status.</span>
+          <span class="empty-sub">Start your PC companion app or connect from your mobile app. Devices will automatically show up here with live Room ID, device name, and connection status.</span>
         </div>
       </div>
     </div>
@@ -540,7 +907,7 @@
     <!-- Services & Endpoints -->
     <div class="section-card">
       <div class="section-header">
-        <div class="section-title">Available Services</div>
+        <div class="section-title">Available Services & APIs</div>
         <span class="refresh-pill">Endpoints</span>
       </div>
       <div class="endpoints-list">
@@ -560,21 +927,25 @@
         </div>
         <div class="endpoint-item">
           <div class="endpoint-left">
+            <span class="method post">POST</span>
+            <span class="endpoint-path">/api/restart</span>
+          </div>
+          <span style="font-size: 11px; color: var(--text-muted);">Reboots server process</span>
+        </div>
+        <div class="endpoint-item">
+          <div class="endpoint-left">
+            <span class="method post">POST</span>
+            <span class="endpoint-path">/api/reset</span>
+          </div>
+          <span style="font-size: 11px; color: var(--text-muted);">Clears devices & resets uptime</span>
+        </div>
+        <div class="endpoint-item">
+          <div class="endpoint-left">
             <span class="method ws">WS</span>
             <span class="endpoint-path">/socket.io/</span>
           </div>
           <span style="font-size: 11px; color: var(--text-muted);">Relay WebSocket</span>
         </div>
-      </div>
-
-      <div class="action-bar">
-        <button id="refreshBtn" class="btn" onclick="checkServer()">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
-          </svg>
-          Check Now
-        </button>
-        <span id="lastCheckText" class="last-check">Checking...</span>
       </div>
     </div>
 
@@ -583,14 +954,46 @@
     </div>
   </div>
 
+  <!-- Toast Notification element -->
+  <div id="toast" class="toast">
+    <span id="toastMsg">Notification</span>
+  </div>
+
+  <!-- Server Restarting Fullscreen Overlay -->
+  <div id="restartOverlay" class="overlay">
+    <div class="overlay-box">
+      <div class="spinner"></div>
+      <div class="overlay-title">Restarting Server...</div>
+      <div id="overlayDesc" class="overlay-desc">
+        The Node.js server is closing connections, re-spawning, and restarting the process. Reconnecting automatically...
+      </div>
+    </div>
+  </div>
+
   <script>
+    let isRebooting = false;
+    let baseUptimeSeconds = 0;
+    let lastFetchTimestamp = 0;
+    let lastCheckTime = null;
+    let cachedDevices = [];
+
+    function showToast(message, duration = 3000) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toastMsg');
+      toastMsg.innerText = message;
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, duration);
+    }
+
     function formatUptime(seconds) {
-      if (typeof seconds !== 'number' || isNaN(seconds)) return '0s';
+      if (typeof seconds !== 'number' || isNaN(seconds) || seconds < 0) return '0s';
       const d = Math.floor(seconds / (3600 * 24));
       const h = Math.floor((seconds % (3600 * 24)) / 3600);
       const m = Math.floor((seconds % 3600) / 60);
       const s = seconds % 60;
-      if (d > 0) return `${d}d ${h}h ${m}m`;
+      if (d > 0) return `${d}d ${h}h ${m}m ${s}s`;
       if (h > 0) return `${h}h ${m}m ${s}s`;
       if (m > 0) return `${m}m ${s}s`;
       return `${s}s`;
@@ -600,20 +1003,31 @@
       if (!dateString) return 'Just now';
       const past = new Date(dateString).getTime();
       const diffSec = Math.floor((Date.now() - past) / 1000);
-      if (diffSec < 10) return 'Just now';
+      if (diffSec < 2) return 'Just now';
       if (diffSec < 60) return `${diffSec}s ago`;
       const diffMin = Math.floor(diffSec / 60);
-      if (diffMin < 60) return `${diffMin}m ago`;
+      if (diffMin < 60) return `${diffMin}m ${diffSec % 60}s ago`;
       const diffHr = Math.floor(diffMin / 60);
-      return `${diffHr}h ago`;
+      return `${diffHr}h ${diffMin % 60}m ago`;
+    }
+
+    function copyToClipboard(text, label) {
+      navigator.clipboard.writeText(text).then(() => {
+        showToast(`Copied ${label || 'text'}: ${text}`);
+      }).catch(() => {
+        showToast(`Room ID: ${text}`);
+      });
     }
 
     function renderDevices(devices) {
+      cachedDevices = devices || [];
       const container = document.getElementById('devicesContainer');
       const countPill = document.getElementById('deviceCountPill');
+      const flowBanner = document.getElementById('connectionFlowBanner');
 
       if (!devices || devices.length === 0) {
         countPill.innerText = '0 Online';
+        flowBanner.style.display = 'none';
         container.innerHTML = `
           <div class="empty-state">
             <div class="empty-icons">
@@ -627,7 +1041,7 @@
               </svg>
             </div>
             <span class="empty-title">No devices currently connected</span>
-            <span class="empty-sub">Start your PC companion app or open the mobile app to connect. Devices will automatically show up here with live status.</span>
+            <span class="empty-sub">Start your PC companion app or connect from your mobile app. Devices will automatically show up here with live Room ID, device name, and connection status.</span>
           </div>
         `;
         return;
@@ -635,16 +1049,72 @@
 
       countPill.innerText = `${devices.length} ${devices.length === 1 ? 'Device' : 'Devices'} Online`;
 
+      // Check if we have an active paired mobile + PC link to show the flow banner
+      const mobiles = devices.filter(d => d.role === 'mobile');
+      const pcs = devices.filter(d => d.role === 'pc');
+
+      const pairedMobile = mobiles.find(m => m.pairedWith);
+      if (pairedMobile) {
+        const pairedPc = pcs.find(p => p.id === pairedMobile.pairedWith);
+        const pcName = pairedPc ? (pairedPc.name || pairedPc.id) : (pairedMobile.pairedPcName || pairedMobile.pairedWith);
+        const mobileName = pairedMobile.mobileName || pairedMobile.name || 'Mobile Client';
+        const roomId = pairedMobile.roomId || pairedMobile.pairedWith;
+
+        flowBanner.style.display = 'flex';
+        flowBanner.className = 'connection-flow-banner';
+        flowBanner.innerHTML = `
+          <div class="flow-node">
+            <div class="flow-icon mobile">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="5" y="2" width="14" height="20" rx="3" ry="3"/>
+                <line x1="12" y1="18" x2="12.01" y2="18"/>
+              </svg>
+            </div>
+            <div class="flow-meta">
+              <span class="name">${mobileName}</span>
+              <span class="sub">Mobile Controller</span>
+            </div>
+          </div>
+
+          <div class="flow-link">
+            <span class="flow-room-badge" onclick="copyToClipboard('${roomId}', 'Room ID')" title="Click to copy Room ID">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 2l-2 2m-2-2l2 2M3 13h18M3 7h18M3 19h18"/>
+              </svg>
+              Room: ${roomId}
+            </span>
+            <div class="flow-line">
+              <div class="flow-pulse"></div>
+            </div>
+          </div>
+
+          <div class="flow-node">
+            <div class="flow-icon pc">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="4" width="18" height="12" rx="2" ry="2"/>
+                <line x1="2" y1="20" x2="22" y2="20"/>
+              </svg>
+            </div>
+            <div class="flow-meta">
+              <span class="name">${pcName}</span>
+              <span class="sub">PC Host Target</span>
+            </div>
+          </div>
+        `;
+      } else {
+        flowBanner.style.display = 'none';
+      }
+
       let html = '';
       devices.forEach(dev => {
         const isLaptop = (dev.type === 'laptop' || dev.type === 'pc' || dev.role === 'pc');
+        const roomId = dev.roomId || dev.id;
 
         if (isLaptop) {
           html += `
-            <div class="device-card">
+            <div class="device-card laptop-card">
               <div class="device-info-group">
                 <div class="device-icon-box laptop" title="Laptop / PC Host">
-                  <!-- Laptop SVG Icon -->
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <rect x="3" y="4" width="18" height="12" rx="2" ry="2"/>
                     <line x1="2" y1="20" x2="22" y2="20"/>
@@ -652,51 +1122,73 @@
                 </div>
                 <div class="device-details">
                   <div class="device-title-row">
-                    <span class="device-name">${dev.name || dev.id}</span>
+                    <span class="device-name-title">${dev.name || dev.id}</span>
                     <span class="tag laptop">💻 Laptop / PC</span>
                     <span class="tag host">Host</span>
-                    ${dev.pairedMobilesCount > 0 ? `<span class="tag paired">📱 ${dev.pairedMobilesCount} Paired</span>` : ''}
+                    <span class="tag room" onclick="copyToClipboard('${roomId}', 'Room ID')" title="Click to copy Room ID">
+                      🔑 Room: <strong>${roomId}</strong>
+                    </span>
+                    ${dev.pairedMobilesCount > 0 ? `<span class="tag paired-host">📱 ${dev.pairedMobilesCount} Mobile Connected</span>` : ''}
                   </div>
                   <div class="device-meta">
                     <span>IP: ${dev.ip || '127.0.0.1'}</span>
                     <span>&bull;</span>
-                    <span>Connected ${timeAgo(dev.connectedAt)}</span>
+                    <span class="live-time-ago" data-time="${dev.connectedAt}">Connected ${timeAgo(dev.connectedAt)}</span>
                   </div>
                 </div>
               </div>
               <div class="device-status-badge">
-                <span class="live-dot"></span>
-                <span>Active</span>
+                <div class="status-indicator">
+                  <span class="live-dot"></span>
+                  <span>Active Host</span>
+                </div>
+                <span class="device-badge-sub">Ready for Relay</span>
               </div>
             </div>
           `;
         } else {
+          const mobileTitle = dev.mobileName || dev.name || 'Mobile Phone';
+          const pairedWith = dev.pairedWith;
+          const pairedName = dev.pairedPcName || (pairedWith ? `Room #${pairedWith}` : null);
+
           html += `
-            <div class="device-card">
+            <div class="device-card mobile-card">
               <div class="device-info-group">
-                <div class="device-icon-box mobile" title="Mobile Device">
-                  <!-- Smartphone SVG Icon -->
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <div class="device-icon-box mobile" title="Mobile Controller">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <rect x="5" y="2" width="14" height="20" rx="3" ry="3"/>
                     <line x1="12" y1="18" x2="12.01" y2="18"/>
                   </svg>
                 </div>
                 <div class="device-details">
                   <div class="device-title-row">
-                    <span class="device-name">${dev.name || 'Mobile Phone'}</span>
+                    <!-- Mobile Name -->
+                    <span class="device-name-title">${mobileTitle}</span>
                     <span class="tag mobile">📱 Mobile</span>
-                    ${dev.pairedWith ? `<span class="tag paired">🔗 Paired to: ${dev.pairedWith}</span>` : '<span class="tag paired">Ready</span>'}
+                    
+                    <!-- Room ID -->
+                    ${pairedWith ? `
+                      <span class="tag room" onclick="copyToClipboard('${pairedWith}', 'Room ID')" title="Click to copy Room ID">
+                        🔑 Room: <strong>${pairedWith}</strong>
+                      </span>
+                      <span class="tag paired-host">🔗 Linked to: ${pairedName}</span>
+                    ` : `
+                      <span class="tag room">No Room Paired</span>
+                    `}
                   </div>
                   <div class="device-meta">
                     <span>IP: ${dev.ip || '127.0.0.1'}</span>
                     <span>&bull;</span>
-                    <span>Connected ${timeAgo(dev.connectedAt)}</span>
+                    <span class="live-time-ago" data-time="${dev.connectedAt}">Connected ${timeAgo(dev.connectedAt)}</span>
                   </div>
                 </div>
               </div>
               <div class="device-status-badge">
-                <span class="live-dot"></span>
-                <span>Active</span>
+                <div class="status-indicator">
+                  <span class="live-dot"></span>
+                  <span>${pairedWith ? 'Connected' : 'Online'}</span>
+                </div>
+                <span class="device-badge-sub">${pairedWith ? 'Streaming Controls' : 'Waiting to Pair'}</span>
               </div>
             </div>
           `;
@@ -706,7 +1198,35 @@
       container.innerHTML = html;
     }
 
+    // Smooth 1-second timer tick: updates uptime and connection times without waiting for HTTP poll
+    setInterval(() => {
+      if (lastFetchTimestamp > 0) {
+        const elapsed = Math.floor((Date.now() - lastFetchTimestamp) / 1000);
+        const currentUptime = baseUptimeSeconds + elapsed;
+        document.getElementById('statUptime').innerText = formatUptime(currentUptime);
+      }
+
+      // Update all relative "seconds ago" stamps in real time
+      document.querySelectorAll('.live-time-ago').forEach(el => {
+        const iso = el.getAttribute('data-time');
+        if (iso) el.innerText = 'Connected ' + timeAgo(iso);
+      });
+
+      // Update last check text
+      if (lastCheckTime) {
+        const secAgo = Math.floor((Date.now() - lastCheckTime) / 1000);
+        const lastCheckEl = document.getElementById('lastCheckText');
+        if (secAgo < 2) {
+          lastCheckEl.innerText = 'Checked Just now';
+        } else {
+          lastCheckEl.innerText = `Checked ${secAgo}s ago`;
+        }
+      }
+    }, 1000);
+
     async function checkServer() {
+      if (isRebooting) return;
+
       const startTime = performance.now();
       const mainCard = document.getElementById('mainCard');
       const badgeText = document.getElementById('badgeText');
@@ -719,7 +1239,7 @@
       const lastCheckText = document.getElementById('lastCheckText');
 
       try {
-        const response = await fetch('/health', { cache: 'no-store' });
+        const response = await fetch('/health?t=' + Date.now(), { cache: 'no-store' });
         const latency = Math.round(performance.now() - startTime);
 
         if (response.ok) {
@@ -732,11 +1252,17 @@
           statStatus.innerText = 'Online';
           statStatus.style.color = 'var(--green)';
           statPort.innerText = data.port || (window.location.port || '3000');
-          statUptime.innerText = formatUptime(data.uptimeSeconds);
-          statDevicesTotal.innerText = `${data.totalDevices || 0} (${data.registeredPcs || 0} PC, ${data.connectedMobiles || 0} Mob)`;
-          lastCheckText.innerText = `Checked at ${new Date().toLocaleTimeString()} (${latency}ms)`;
+          
+          // Store base uptime and timestamp for live second ticking
+          baseUptimeSeconds = data.uptimeSeconds || 0;
+          lastFetchTimestamp = Date.now();
+          lastCheckTime = Date.now();
+          statUptime.innerText = formatUptime(baseUptimeSeconds);
 
-          // Render live devices list with laptop & mobile icons
+          statDevicesTotal.innerText = `${data.totalDevices || 0} (${data.registeredPcs || 0} PC, ${data.connectedMobiles || 0} Mob)`;
+          lastCheckText.innerText = `Checked Just now (${latency}ms)`;
+
+          // Render live devices list with mobile name and Room ID
           renderDevices(data.devices || []);
         } else {
           throw new Error('HTTP ' + response.status);
@@ -749,15 +1275,77 @@
         
         statStatus.innerText = 'Offline';
         statStatus.style.color = 'var(--red)';
-        lastCheckText.innerText = `Failed to connect at ${new Date().toLocaleTimeString()}`;
+        lastCheckText.innerText = `Failed at ${new Date().toLocaleTimeString()}`;
+      }
+    }
+
+    // Trigger full server process restart
+    async function confirmRestart() {
+      const ok = confirm('Are you sure you want to RESTART the server?\n\nThis will reboot the Node.js server process and re-establish network listeners. Connected devices will briefly disconnect.');
+      if (!ok) return;
+
+      const overlay = document.getElementById('restartOverlay');
+      const overlayDesc = document.getElementById('overlayDesc');
+      isRebooting = true;
+      overlay.classList.add('show');
+      overlayDesc.innerText = 'Sending restart request to server process...';
+
+      try {
+        await fetch('/api/restart', { method: 'POST' });
+      } catch (_) {}
+
+      overlayDesc.innerText = 'Server process restarting. Waiting for port to reopen...';
+
+      setTimeout(() => {
+        let attempts = 0;
+        const pollInterval = setInterval(async () => {
+          attempts++;
+          try {
+            const res = await fetch('/health?t=' + Date.now(), { cache: 'no-store' });
+            if (res.ok) {
+              clearInterval(pollInterval);
+              overlayDesc.innerText = 'Server back online! Updating dashboard...';
+              setTimeout(() => {
+                isRebooting = false;
+                overlay.classList.remove('show');
+                showToast('Server restarted successfully!');
+                checkServer();
+              }, 600);
+            }
+          } catch (_) {
+            if (attempts > 30) {
+              clearInterval(pollInterval);
+              overlayDesc.innerText = 'Restart took longer than expected. Please refresh the page manually.';
+              setTimeout(() => {
+                isRebooting = false;
+                overlay.classList.remove('show');
+              }, 4000);
+            }
+          }
+        }, 700);
+      }, 1200);
+    }
+
+    // Trigger server state reset (clears devices & restarts uptime clock)
+    async function confirmReset() {
+      const ok = confirm('Are you sure you want to RESET server connections and state?\n\nThis will clear all registered PCs and mobiles, disconnect active sockets, and reset the uptime timer without stopping the Node.js process.');
+      if (!ok) return;
+
+      try {
+        const res = await fetch('/api/reset', { method: 'POST' });
+        const data = await res.json();
+        showToast(data.message || 'Server state reset successfully');
+        checkServer();
+      } catch (err) {
+        showToast('Error resetting server: ' + err.message);
       }
     }
 
     // Initial check
     checkServer();
 
-    // Auto-poll every 3 seconds for live device updates
-    setInterval(checkServer, 3000);
+    // Auto-poll every 2.5 seconds for live device updates
+    setInterval(checkServer, 2500);
   </script>
 </body>
 </html>

@@ -125,9 +125,11 @@ flowchart LR
 
 | URL | Type | Description |
 | :--- | :--- | :--- |
-| **`http://localhost:3000/`** | Web Dashboard | Visual real-time dashboard showing server status (Online 🟢 / Offline 🔴), port, uptime, and connected devices with laptop/mobile icons. |
+| **`http://localhost:3000/`** | Web Dashboard | Visual real-time dashboard showing server status (Online 🟢 / Offline 🔴), port, uptime, connected devices, and **Restart / Reset** controls. |
 | **`http://localhost:3000/health`** | REST API | Returns JSON payload with `{ status, uptimeSeconds, registeredPcs, connectedMobiles, totalDevices, port, devices }`. |
 | **`http://localhost:3000/api/devices`** | REST API | Returns connected devices with names, types (`laptop` / `mobile`), IPs, and paired hosts. |
+| **`POST /api/restart`** | Admin API | Gracefully reboots the Node.js server process and rebinds port 3000. |
+| **`POST /api/reset`** | Admin API | Disconnects all active client sockets, clears registered devices, and resets uptime without shutting down the process. |
 | **`ws://localhost:3000/socket.io/`** | WebSocket | Socket.IO endpoint used for PC registration and mobile remote control relay. |
 
 ---
