@@ -45,6 +45,32 @@ function formatFullIp(ip) {
   return clean;
 }
 
+// HTTP REST command endpoint for mobile (fallback when WebSockets are blocked)
+app.post('/api/command', (req, res) => {
+  const { pcId, roomId, event, data, action } = req.body || {};
+  let targetId = pcId || roomId;
+  const activePcIds = Object.keys(registeredPcs);
+  if (!targetId && activePcIds.length === 1) {
+    targetId = activePcIds[0];
+  }
+  if (!targetId || !registeredPcs[targetId]) {
+    return res.status(404).json({
+      status: 'error',
+      message: `Target PC/Room not found: ${targetId || 'none'}`,
+      availableRooms: activePcIds
+    });
+  }
+
+  const eventName = event || 'control-event';
+  const payload = data || { action };
+  try {
+    registeredPcs[targetId].socket.emit(eventName, payload);
+    res.json({ status: 'ok', deliveredTo: targetId });
+  } catch (err) {
+    res.status(500).json({ status: 'error', message: err.message });
+  }
+});
+
 app.get('/health', (req, res) => {
   const pcList = Object.keys(registeredPcs).map(id => ({
     id,
@@ -305,21 +331,33 @@ io.on('connection', (socket) => {
 
   // ---- Mobile connects and selects a PC / Room to relay through ----
   // Supports 'mobile-connect', 'connect_pc', 'join_room', 'register_mobile'
-  const handleMobileConnect = (data) => {
-    const requestedId = (data && (data.pcId || data.roomId)) ? String(data.pcId || data.roomId) : null;
+  const handleMobileConnect = (rawData) => {
+    let data = rawData;
+    if (typeof rawData === 'string') {
+      try { data = JSON.parse(rawData); } catch (_) {}
+    }
+
+    const activePcIds = Object.keys(registeredPcs);
+    let requestedId = (data && (data.pcId || data.roomId)) ? String(data.pcId || data.roomId) : null;
+    
+    // Auto-detect PC if there is only 1 PC registered and mobile didn't provide pcId
+    if (!requestedId && activePcIds.length === 1) {
+      requestedId = activePcIds[0];
+    }
+
     let targetPcId = requestedId;
 
     // If requestedId not exact match, try case-insensitive or partial match
     if (targetPcId && !registeredPcs[targetPcId]) {
       const lower = targetPcId.toLowerCase();
-      const match = Object.keys(registeredPcs).find(k => k.toLowerCase() === lower);
+      const match = activePcIds.find(k => k.toLowerCase() === lower);
       if (match) targetPcId = match;
     }
 
     if (!targetPcId || !registeredPcs[targetPcId]) {
       socket.emit('error', {
-        message: `PC / Room not found: ${requestedId}`,
-        availableRooms: Object.keys(registeredPcs)
+        message: `PC / Room not found: ${requestedId || 'none'}`,
+        availableRooms: activePcIds
       });
       return;
     }
@@ -381,7 +419,11 @@ io.on('connection', (socket) => {
   });
 
   // ---- Relay: mobile -> PC (all control events) ----
-  const relayToPc = (eventName, data) => {
+  const relayToPc = (eventName, rawData) => {
+    let data = rawData;
+    if (typeof rawData === 'string') {
+      try { data = JSON.parse(rawData); } catch (_) {}
+    }
     const pcId = mobilePcMap[socket.id];
     if (!pcId || !registeredPcs[pcId]) return;
     try {
