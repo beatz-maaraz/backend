@@ -4,6 +4,7 @@ const cors = require('cors');
 const { Server } = require('socket.io');
 const net = require('net');
 const path = require('path');
+const os = require('os');
 const { spawn } = require('child_process');
 
 const app = express();
@@ -18,11 +19,30 @@ app.use(cors({ origin: '*', methods: ['GET', 'POST'] }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-function cleanIp(ip) {
+function getLocalIp() {
+  try {
+    const interfaces = os.networkInterfaces();
+    for (const devName of Object.keys(interfaces)) {
+      for (const iface of interfaces[devName]) {
+        if (iface.family === 'IPv4' && !iface.internal) {
+          return iface.address;
+        }
+      }
+    }
+  } catch (_) {}
+  return '127.0.0.1';
+}
+
+function formatFullIp(ip) {
   if (!ip) return '127.0.0.1';
-  if (ip.startsWith('::ffff:')) return ip.replace('::ffff:', '');
-  if (ip === '::1') return '127.0.0.1';
-  return ip;
+  let clean = String(ip).trim();
+  if (clean.startsWith('::ffff:')) {
+    clean = clean.replace('::ffff:', '');
+  }
+  if (clean === '::1' || clean === '127.0.0.1') {
+    return '127.0.0.1 (Localhost)';
+  }
+  return clean;
 }
 
 app.get('/health', (req, res) => {
@@ -63,6 +83,7 @@ app.get('/health', (req, res) => {
     connectedMobiles: mobileList.length,
     totalDevices: pcList.length + mobileList.length,
     port: PORT,
+    serverIp: getLocalIp(),
     devices: [...pcList, ...mobileList],
   });
 });
@@ -99,6 +120,8 @@ app.get('/api/devices', (req, res) => {
 
   res.json({
     status: 'ok',
+    serverIp: getLocalIp(),
+    port: PORT,
     total: pcList.length + mobileList.length,
     devices: [...pcList, ...mobileList]
   });
@@ -225,7 +248,7 @@ const io = new Server(server, {
 });
 
 io.on('connection', (socket) => {
-  const clientIp = cleanIp(socket.handshake.address);
+  const clientIp = formatFullIp(socket.handshake.address);
   console.log(`[+] Connected: ID=${socket.id} (IP: ${clientIp})`);
 
   // Detect pre-configured mobile clients via query string

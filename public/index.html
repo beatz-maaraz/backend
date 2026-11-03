@@ -44,7 +44,7 @@
 
     .container {
       width: 100%;
-      max-width: 760px;
+      max-width: 780px;
       display: flex;
       flex-direction: column;
       gap: 20px;
@@ -120,6 +120,9 @@
       letter-spacing: 0.5px;
       text-transform: uppercase;
       color: var(--green);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
     }
 
     .status-card.offline .status-badge-text {
@@ -143,7 +146,7 @@
     /* Stats Grid */
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
       gap: 12px;
     }
 
@@ -154,7 +157,13 @@
       padding: 14px 16px;
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 6px;
+    }
+
+    .stat-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
 
     .stat-label {
@@ -163,10 +172,13 @@
       text-transform: uppercase;
       letter-spacing: 0.5px;
       color: var(--text-muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
     }
 
     .stat-value {
-      font-size: 18px;
+      font-size: 17px;
       font-weight: 700;
       color: #ffffff;
       word-break: break-all;
@@ -190,7 +202,7 @@
     }
 
     .control-title {
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.5px;
@@ -207,7 +219,7 @@
     }
 
     .btn {
-      padding: 10px 18px;
+      padding: 9px 16px;
       border-radius: 8px;
       cursor: pointer;
       font-size: 13px;
@@ -280,7 +292,7 @@
     }
 
     .section-title {
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 700;
       color: #ffffff;
       display: flex;
@@ -296,37 +308,43 @@
       background: rgba(59, 130, 246, 0.15);
       color: var(--accent);
       border: 1px solid rgba(59, 130, 246, 0.3);
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
     }
 
     .refresh-pill {
       font-size: 11px;
       font-weight: 600;
       color: var(--text-muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
     }
 
     /* Active Connection Flow Graphic */
     .connection-flow-banner {
-      background: linear-gradient(90deg, rgba(20, 184, 166, 0.12) 0%, rgba(59, 130, 246, 0.15) 50%, rgba(139, 92, 246, 0.12) 100%);
-      border: 1px solid rgba(59, 130, 246, 0.35);
+      background: linear-gradient(90deg, rgba(20, 184, 166, 0.12) 0%, rgba(59, 130, 246, 0.16) 50%, rgba(139, 92, 246, 0.12) 100%);
+      border: 1px solid rgba(59, 130, 246, 0.4);
       border-radius: 12px;
-      padding: 14px 18px;
+      padding: 16px 20px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 12px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
     }
 
     .flow-node {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
     }
 
     .flow-icon {
-      width: 34px;
-      height: 34px;
-      border-radius: 8px;
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -348,27 +366,31 @@
     .flow-meta {
       display: flex;
       flex-direction: column;
+      gap: 2px;
     }
 
     .flow-meta .name {
-      font-size: 13px;
-      font-weight: 700;
+      font-size: 14px;
+      font-weight: 800;
       color: #ffffff;
     }
 
     .flow-meta .sub {
       font-size: 11px;
       color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 4px;
     }
 
     .flow-link {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 2px;
+      gap: 4px;
       flex-grow: 1;
-      max-width: 220px;
-      padding: 0 10px;
+      max-width: 260px;
+      padding: 0 12px;
     }
 
     .flow-room-badge {
@@ -377,12 +399,18 @@
       color: #fcd34d;
       font-size: 11px;
       font-weight: 700;
-      padding: 3px 10px;
+      padding: 4px 12px;
       border-radius: 20px;
-      display: flex;
+      display: inline-flex;
       align-items: center;
-      gap: 5px;
+      gap: 6px;
       letter-spacing: 0.3px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .flow-room-badge:hover {
+      background: rgba(245, 158, 11, 0.35);
     }
 
     .flow-line {
@@ -513,7 +541,7 @@
       letter-spacing: 0.3px;
       display: inline-flex;
       align-items: center;
-      gap: 4px;
+      gap: 5px;
     }
 
     .tag.laptop {
@@ -563,7 +591,7 @@
     .device-meta span {
       display: inline-flex;
       align-items: center;
-      gap: 4px;
+      gap: 5px;
     }
 
     .device-status-badge {
@@ -684,6 +712,9 @@
       text-decoration: none;
       font-size: 12px;
       font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
     }
 
     .endpoint-link:hover {
@@ -693,6 +724,9 @@
     .last-check {
       font-size: 12px;
       color: var(--text-muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
     }
 
     .footer {
@@ -801,7 +835,12 @@
     <div id="mainCard" class="status-card online">
       <div class="badge-container">
         <span class="pulse-dot"></span>
-        <span id="badgeText" class="status-badge-text">Server is Running</span>
+        <span id="badgeText" class="status-badge-text">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          Server is Running
+        </span>
       </div>
       <h1 id="mainTitle" class="main-title">Server Online</h1>
       <p id="subTitle" class="sub-title">The backend relay server is active, healthy, and accepting incoming connections.</p>
@@ -810,19 +849,57 @@
     <!-- Quick Stats Grid -->
     <div class="grid">
       <div class="stat-card">
-        <span class="stat-label">Health Status</span>
+        <div class="stat-header">
+          <span class="stat-label">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+              <polyline points="22 4 12 14.01 9 11.01"/>
+            </svg>
+            Health Status
+          </span>
+        </div>
         <span id="statStatus" class="stat-value" style="color: var(--green);">200 OK</span>
       </div>
+
       <div class="stat-card">
-        <span class="stat-label">Port</span>
-        <span id="statPort" class="stat-value">3000</span>
+        <div class="stat-header">
+          <span class="stat-label">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="2" y1="12" x2="22" y2="12"/>
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+            </svg>
+            Server Host IP
+          </span>
+        </div>
+        <span id="statServerIp" class="stat-value" style="font-size: 15px;">127.0.0.1:3000</span>
       </div>
+
       <div class="stat-card">
-        <span class="stat-label">Uptime</span>
+        <div class="stat-header">
+          <span class="stat-label">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 16 14"/>
+            </svg>
+            Uptime
+          </span>
+        </div>
         <span id="statUptime" class="stat-value">0s</span>
       </div>
+
       <div class="stat-card">
-        <span class="stat-label">Total Devices</span>
+        <div class="stat-header">
+          <span class="stat-label">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+            Total Devices
+          </span>
+        </div>
         <span id="statDevicesTotal" class="stat-value">0</span>
       </div>
     </div>
@@ -831,7 +908,7 @@
     <div class="control-card">
       <div class="control-header">
         <span class="control-title">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
             <line x1="8" y1="21" x2="16" y2="21"/>
             <line x1="12" y1="17" x2="12" y2="21"/>
@@ -876,30 +953,49 @@
     <div class="section-card">
       <div class="section-header">
         <div class="section-title">
-          <span>Connected Devices & Rooms</span>
-          <span id="deviceCountPill" class="device-count-pill">0 Online</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+            <line x1="8" y1="21" x2="16" y2="21"/>
+            <line x1="12" y1="17" x2="12" y2="21"/>
+          </svg>
+          Connected Devices & Rooms
         </div>
-        <span class="refresh-pill">Live Synced</span>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span id="deviceCountPill" class="device-count-pill">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="8" x2="12" y2="12"/>
+              <line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+            0 Online
+          </span>
+          <span class="refresh-pill">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+            </svg>
+            Live Synced
+          </span>
+        </div>
       </div>
 
-      <!-- Active Connection Flow Banner (Visible when both PC and Mobile are connected) -->
+      <!-- Active Connection Flow Graphic (Visible when both PC and Mobile are connected) -->
       <div id="connectionFlowBanner" style="display: none;"></div>
 
       <div id="devicesContainer" class="devices-list">
         <!-- Rendered dynamically -->
         <div class="empty-state">
           <div class="empty-icons">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
               <rect x="3" y="4" width="18" height="12" rx="2" ry="2"/>
               <line x1="2" y1="20" x2="22" y2="20"/>
             </svg>
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
               <rect x="5" y="2" width="14" height="20" rx="3" ry="3"/>
               <line x1="12" y1="18" x2="12.01" y2="18"/>
             </svg>
           </div>
           <span class="empty-title">No devices currently connected</span>
-          <span class="empty-sub">Start your PC companion app or connect from your mobile app. Devices will automatically show up here with live Room ID, device name, and connection status.</span>
+          <span class="empty-sub">Start your PC companion app or connect from your mobile app. Devices will automatically show up here with live Room ID, full IP address, and connection status.</span>
         </div>
       </div>
     </div>
@@ -907,7 +1003,12 @@
     <!-- Services & Endpoints -->
     <div class="section-card">
       <div class="section-header">
-        <div class="section-title">Available Services & APIs</div>
+        <div class="section-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 17l6-6-6-6M12 19h8"/>
+          </svg>
+          Available Services & APIs
+        </div>
         <span class="refresh-pill">Endpoints</span>
       </div>
       <div class="endpoints-list">
@@ -916,14 +1017,26 @@
             <span class="method get">GET</span>
             <span class="endpoint-path">/health</span>
           </div>
-          <a href="/health" target="_blank" class="endpoint-link">View JSON &rarr;</a>
+          <a href="/health" target="_blank" class="endpoint-link">
+            View JSON
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="7" y1="17" x2="17" y2="7"/>
+              <polyline points="7 7 17 7 17 17"/>
+            </svg>
+          </a>
         </div>
         <div class="endpoint-item">
           <div class="endpoint-left">
             <span class="method get">GET</span>
             <span class="endpoint-path">/api/devices</span>
           </div>
-          <a href="/api/devices" target="_blank" class="endpoint-link">Devices JSON &rarr;</a>
+          <a href="/api/devices" target="_blank" class="endpoint-link">
+            Devices JSON
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="7" y1="17" x2="17" y2="7"/>
+              <polyline points="7 7 17 7 17 17"/>
+            </svg>
+          </a>
         </div>
         <div class="endpoint-item">
           <div class="endpoint-left">
@@ -956,6 +1069,9 @@
 
   <!-- Toast Notification element -->
   <div id="toast" class="toast">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5">
+      <polyline points="20 6 9 17 4 12"/>
+    </svg>
     <span id="toastMsg">Notification</span>
   </div>
 
@@ -976,6 +1092,22 @@
     let lastFetchTimestamp = 0;
     let lastCheckTime = null;
     let cachedDevices = [];
+
+    // SVG icon templates (No emojis!)
+    const SVG_ICONS = {
+      laptop: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2" ry="2"/><line x1="2" y1="20" x2="22" y2="20"/></svg>`,
+      laptopSmall: `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2" ry="2"/><line x1="2" y1="20" x2="22" y2="20"/></svg>`,
+      mobile: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="3" ry="3"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>`,
+      mobileSmall: `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="3" ry="3"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>`,
+      key: `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="4.5"/><path d="M11 12l9-9M17 3l4 4M14 6l3 3"/></svg>`,
+      link: `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>`,
+      network: `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>`,
+      host: `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5.25-3.5 10-8 11-4.5-1-8-5.75-8-11V6l8-4z"/></svg>`,
+      users: `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
+      clock: `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`,
+      copy: `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`,
+      check: `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`
+    };
 
     function showToast(message, duration = 3000) {
       const toast = document.getElementById('toast');
@@ -1026,28 +1158,38 @@
       const flowBanner = document.getElementById('connectionFlowBanner');
 
       if (!devices || devices.length === 0) {
-        countPill.innerText = '0 Online';
+        countPill.innerHTML = `
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+          0 Online
+        `;
         flowBanner.style.display = 'none';
         container.innerHTML = `
           <div class="empty-state">
             <div class="empty-icons">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                 <rect x="3" y="4" width="18" height="12" rx="2" ry="2"/>
                 <line x1="2" y1="20" x2="22" y2="20"/>
               </svg>
-              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                 <rect x="5" y="2" width="14" height="20" rx="3" ry="3"/>
                 <line x1="12" y1="18" x2="12.01" y2="18"/>
               </svg>
             </div>
             <span class="empty-title">No devices currently connected</span>
-            <span class="empty-sub">Start your PC companion app or connect from your mobile app. Devices will automatically show up here with live Room ID, device name, and connection status.</span>
+            <span class="empty-sub">Start your PC companion app or connect from your mobile app. Devices will automatically show up here with live Room ID, full IP address, and connection status.</span>
           </div>
         `;
         return;
       }
 
-      countPill.innerText = `${devices.length} ${devices.length === 1 ? 'Device' : 'Devices'} Online`;
+      countPill.innerHTML = `
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        ${devices.length} ${devices.length === 1 ? 'Device' : 'Devices'} Online
+      `;
 
       // Check if we have an active paired mobile + PC link to show the flow banner
       const mobiles = devices.filter(d => d.role === 'mobile');
@@ -1057,7 +1199,9 @@
       if (pairedMobile) {
         const pairedPc = pcs.find(p => p.id === pairedMobile.pairedWith);
         const pcName = pairedPc ? (pairedPc.name || pairedPc.id) : (pairedMobile.pairedPcName || pairedMobile.pairedWith);
+        const pcIp = pairedPc ? (pairedPc.ip || '127.0.0.1') : 'Connected Host';
         const mobileName = pairedMobile.mobileName || pairedMobile.name || 'Mobile Client';
+        const mobileIp = pairedMobile.ip || '127.0.0.1';
         const roomId = pairedMobile.roomId || pairedMobile.pairedWith;
 
         flowBanner.style.display = 'flex';
@@ -1065,39 +1209,39 @@
         flowBanner.innerHTML = `
           <div class="flow-node">
             <div class="flow-icon mobile">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="5" y="2" width="14" height="20" rx="3" ry="3"/>
-                <line x1="12" y1="18" x2="12.01" y2="18"/>
-              </svg>
+              ${SVG_ICONS.mobile}
             </div>
             <div class="flow-meta">
               <span class="name">${mobileName}</span>
-              <span class="sub">Mobile Controller</span>
+              <span class="sub">
+                ${SVG_ICONS.network}
+                IP: ${mobileIp}
+              </span>
             </div>
           </div>
 
           <div class="flow-link">
             <span class="flow-room-badge" onclick="copyToClipboard('${roomId}', 'Room ID')" title="Click to copy Room ID">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M21 2l-2 2m-2-2l2 2M3 13h18M3 7h18M3 19h18"/>
-              </svg>
+              ${SVG_ICONS.key}
               Room: ${roomId}
+              ${SVG_ICONS.copy}
             </span>
             <div class="flow-line">
               <div class="flow-pulse"></div>
             </div>
+            <span style="font-size: 10px; color: var(--text-muted); margin-top: 4px;">Relay Link Active</span>
           </div>
 
           <div class="flow-node">
             <div class="flow-icon pc">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="3" y="4" width="18" height="12" rx="2" ry="2"/>
-                <line x1="2" y1="20" x2="22" y2="20"/>
-              </svg>
+              ${SVG_ICONS.laptop}
             </div>
             <div class="flow-meta">
               <span class="name">${pcName}</span>
-              <span class="sub">PC Host Target</span>
+              <span class="sub">
+                ${SVG_ICONS.network}
+                IP: ${pcIp}
+              </span>
             </div>
           </div>
         `;
@@ -1109,31 +1253,47 @@
       devices.forEach(dev => {
         const isLaptop = (dev.type === 'laptop' || dev.type === 'pc' || dev.role === 'pc');
         const roomId = dev.roomId || dev.id;
+        const fullIp = dev.ip || '127.0.0.1';
 
         if (isLaptop) {
           html += `
             <div class="device-card laptop-card">
               <div class="device-info-group">
                 <div class="device-icon-box laptop" title="Laptop / PC Host">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="3" y="4" width="18" height="12" rx="2" ry="2"/>
-                    <line x1="2" y1="20" x2="22" y2="20"/>
-                  </svg>
+                  ${SVG_ICONS.laptop}
                 </div>
                 <div class="device-details">
                   <div class="device-title-row">
                     <span class="device-name-title">${dev.name || dev.id}</span>
-                    <span class="tag laptop">💻 Laptop / PC</span>
-                    <span class="tag host">Host</span>
-                    <span class="tag room" onclick="copyToClipboard('${roomId}', 'Room ID')" title="Click to copy Room ID">
-                      🔑 Room: <strong>${roomId}</strong>
+                    <span class="tag laptop">
+                      ${SVG_ICONS.laptopSmall}
+                      Laptop / PC
                     </span>
-                    ${dev.pairedMobilesCount > 0 ? `<span class="tag paired-host">📱 ${dev.pairedMobilesCount} Mobile Connected</span>` : ''}
+                    <span class="tag host">
+                      ${SVG_ICONS.host}
+                      Host
+                    </span>
+                    <span class="tag room" onclick="copyToClipboard('${roomId}', 'Room ID')" title="Click to copy Room ID">
+                      ${SVG_ICONS.key}
+                      Room: <strong>${roomId}</strong>
+                      ${SVG_ICONS.copy}
+                    </span>
+                    ${dev.pairedMobilesCount > 0 ? `
+                      <span class="tag paired-host">
+                        ${SVG_ICONS.users}
+                        ${dev.pairedMobilesCount} Mobile Connected
+                      </span>` : ''}
                   </div>
                   <div class="device-meta">
-                    <span>IP: ${dev.ip || '127.0.0.1'}</span>
+                    <span title="Full IP Address">
+                      ${SVG_ICONS.network}
+                      Full IP: <strong>${fullIp}</strong>
+                    </span>
                     <span>&bull;</span>
-                    <span class="live-time-ago" data-time="${dev.connectedAt}">Connected ${timeAgo(dev.connectedAt)}</span>
+                    <span class="live-time-ago" data-time="${dev.connectedAt}">
+                      ${SVG_ICONS.clock}
+                      Connected ${timeAgo(dev.connectedAt)}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -1155,31 +1315,42 @@
             <div class="device-card mobile-card">
               <div class="device-info-group">
                 <div class="device-icon-box mobile" title="Mobile Controller">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="5" y="2" width="14" height="20" rx="3" ry="3"/>
-                    <line x1="12" y1="18" x2="12.01" y2="18"/>
-                  </svg>
+                  ${SVG_ICONS.mobile}
                 </div>
                 <div class="device-details">
                   <div class="device-title-row">
                     <!-- Mobile Name -->
                     <span class="device-name-title">${mobileTitle}</span>
-                    <span class="tag mobile">📱 Mobile</span>
+                    <span class="tag mobile">
+                      ${SVG_ICONS.mobileSmall}
+                      Mobile Device
+                    </span>
                     
                     <!-- Room ID -->
                     ${pairedWith ? `
                       <span class="tag room" onclick="copyToClipboard('${pairedWith}', 'Room ID')" title="Click to copy Room ID">
-                        🔑 Room: <strong>${pairedWith}</strong>
+                        ${SVG_ICONS.key}
+                        Room: <strong>${pairedWith}</strong>
+                        ${SVG_ICONS.copy}
                       </span>
-                      <span class="tag paired-host">🔗 Linked to: ${pairedName}</span>
+                      <span class="tag paired-host">
+                        ${SVG_ICONS.link}
+                        Linked to: ${pairedName}
+                      </span>
                     ` : `
                       <span class="tag room">No Room Paired</span>
                     `}
                   </div>
                   <div class="device-meta">
-                    <span>IP: ${dev.ip || '127.0.0.1'}</span>
+                    <span title="Full IP Address">
+                      ${SVG_ICONS.network}
+                      Full IP: <strong>${fullIp}</strong>
+                    </span>
                     <span>&bull;</span>
-                    <span class="live-time-ago" data-time="${dev.connectedAt}">Connected ${timeAgo(dev.connectedAt)}</span>
+                    <span class="live-time-ago" data-time="${dev.connectedAt}">
+                      ${SVG_ICONS.clock}
+                      Connected ${timeAgo(dev.connectedAt)}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -1209,7 +1380,9 @@
       // Update all relative "seconds ago" stamps in real time
       document.querySelectorAll('.live-time-ago').forEach(el => {
         const iso = el.getAttribute('data-time');
-        if (iso) el.innerText = 'Connected ' + timeAgo(iso);
+        if (iso) {
+          el.innerHTML = `${SVG_ICONS.clock} Connected ${timeAgo(iso)}`;
+        }
       });
 
       // Update last check text
@@ -1233,7 +1406,7 @@
       const mainTitle = document.getElementById('mainTitle');
       const subTitle = document.getElementById('subTitle');
       const statStatus = document.getElementById('statStatus');
-      const statPort = document.getElementById('statPort');
+      const statServerIp = document.getElementById('statServerIp');
       const statUptime = document.getElementById('statUptime');
       const statDevicesTotal = document.getElementById('statDevicesTotal');
       const lastCheckText = document.getElementById('lastCheckText');
@@ -1245,13 +1418,22 @@
         if (response.ok) {
           const data = await response.json();
           mainCard.className = 'status-card online';
-          badgeText.innerText = 'Server is Running';
+          badgeText.innerHTML = `
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+            Server is Running
+          `;
           mainTitle.innerText = 'Server Online';
           subTitle.innerText = `The backend server is active, healthy, and responding in ${latency}ms.`;
           
-          statStatus.innerText = 'Online';
+          statStatus.innerText = 'Online (200 OK)';
           statStatus.style.color = 'var(--green)';
-          statPort.innerText = data.port || (window.location.port || '3000');
+
+          // Display full server host IP and port
+          const lanIp = data.serverIp || '127.0.0.1';
+          const port = data.port || (window.location.port || '3000');
+          statServerIp.innerText = `${lanIp}:${port}`;
           
           // Store base uptime and timestamp for live second ticking
           baseUptimeSeconds = data.uptimeSeconds || 0;
@@ -1269,7 +1451,12 @@
         }
       } catch (err) {
         mainCard.className = 'status-card offline';
-        badgeText.innerText = 'Server Offline';
+        badgeText.innerHTML = `
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>
+          </svg>
+          Server Offline
+        `;
         mainTitle.innerText = 'Server Not Responding';
         subTitle.innerText = 'Cannot reach backend server. Please check if the Node.js process is running.';
         
