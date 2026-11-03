@@ -135,6 +135,32 @@
       color: #ffffff;
       margin-bottom: 6px;
       letter-spacing: -0.5px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .main-title-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      color: var(--green);
+      box-shadow: 0 0 16px var(--green-glow);
+      transition: all 0.3s ease;
+      flex-shrink: 0;
+    }
+
+    .status-card.offline .main-title-icon {
+      background: rgba(239, 68, 68, 0.15);
+      border-color: rgba(239, 68, 68, 0.35);
+      color: var(--red);
+      box-shadow: 0 0 16px var(--red-glow);
     }
 
     .sub-title {
@@ -842,7 +868,19 @@
           Server is Running
         </span>
       </div>
-      <h1 id="mainTitle" class="main-title">Server Online</h1>
+      <h1 id="mainTitle" class="main-title">
+        <span id="mainTitleIcon" class="main-title-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="2" width="20" height="8" rx="2" ry="2"/>
+            <rect x="2" y="14" width="20" height="8" rx="2" ry="2"/>
+            <line x1="6" y1="6" x2="6.01" y2="6"/>
+            <line x1="6" y1="18" x2="6.01" y2="18"/>
+            <line x1="18" y1="6" x2="18.01" y2="6"/>
+            <line x1="18" y1="18" x2="18.01" y2="18"/>
+          </svg>
+        </span>
+        <span id="mainTitleText">Server Online</span>
+      </h1>
       <p id="subTitle" class="sub-title">The backend relay server is active, healthy, and accepting incoming connections.</p>
     </div>
 
@@ -1424,7 +1462,21 @@
             </svg>
             Server is Running
           `;
-          mainTitle.innerText = 'Server Online';
+          const mainTitleText = document.getElementById('mainTitleText');
+          const mainTitleIcon = document.getElementById('mainTitleIcon');
+          if (mainTitleText) mainTitleText.innerText = 'Server Online';
+          if (mainTitleIcon) {
+            mainTitleIcon.innerHTML = `
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="2" width="20" height="8" rx="2" ry="2"/>
+                <rect x="2" y="14" width="20" height="8" rx="2" ry="2"/>
+                <line x1="6" y1="6" x2="6.01" y2="6"/>
+                <line x1="6" y1="18" x2="6.01" y2="18"/>
+                <line x1="18" y1="6" x2="18.01" y2="6"/>
+                <line x1="18" y1="18" x2="18.01" y2="18"/>
+              </svg>
+            `;
+          }
           subTitle.innerText = `The backend server is active, healthy, and responding in ${latency}ms.`;
           
           statStatus.innerText = 'Online (200 OK)';
@@ -1457,7 +1509,18 @@
           </svg>
           Server Offline
         `;
-        mainTitle.innerText = 'Server Not Responding';
+        const mainTitleText = document.getElementById('mainTitleText');
+        const mainTitleIcon = document.getElementById('mainTitleIcon');
+        if (mainTitleText) mainTitleText.innerText = 'Server Not Responding';
+        if (mainTitleIcon) {
+          mainTitleIcon.innerHTML = `
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="8" x2="12" y2="12"/>
+              <line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+          `;
+        }
         subTitle.innerText = 'Cannot reach backend server. Please check if the Node.js process is running.';
         
         statStatus.innerText = 'Offline';
