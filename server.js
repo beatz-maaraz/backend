@@ -300,7 +300,7 @@ io.on('connection', (socket) => {
   const clientIp = formatFullIp(socket.handshake.address);
   logEvent('connect', `Socket connected: ${socket.id} (IP: ${clientIp})`, { id: socket.id, ip: clientIp });
 
-  // Detect pre-configured mobile clients via query string
+  // Detect pre-configured mobile or PC clients via query string
   const query = socket.handshake.query || {};
   if (query.role === 'mobile' || query.mobileName || query.deviceName) {
     const devName = String(query.mobileName || query.deviceName || query.name || query.model || `Mobile (${socket.id.slice(0, 5)})`);
@@ -317,6 +317,15 @@ io.on('connection', (socket) => {
     socket.data.role = 'mobile';
     socket.data.deviceName = devName;
     if (roomId) mobilePcMap[socket.id] = roomId;
+  } else if (query.role === 'pc' || query.pcId) {
+    setTimeout(() => {
+      handlePcRegister({
+        pcId: query.pcId,
+        pcName: query.pcName || query.name,
+        deviceType: query.deviceType || query.type || 'laptop',
+        version: query.version || '2.0'
+      });
+    }, 50);
   }
 
   // ---- PC registers itself as available for relay ----
@@ -346,6 +355,29 @@ io.on('connection', (socket) => {
     socket.emit('pc-registered', { pcId, roomId: pcId });
     socket.emit('registered', { pcId, roomId: pcId });
     console.log(`[PC ] Registered: ID=${pcId} Name="${pcName}" Type="${deviceType}"`);
+
+    // Auto-pair any mobile that was already connected waiting for this PC
+    for (const [mobileSocketId, mobInfo] of Object.entries(connectedMobiles)) {
+      const mobTarget = mobInfo.pairedPcId;
+      const isMatch = !mobTarget || 
+                      mobTarget.toLowerCase().replace(/[-_ ]/g, '') === pcId.toLowerCase().replace(/[-_ ]/g, '') ||
+                      Object.keys(registeredPcs).length === 1;
+
+      if (isMatch) {
+        mobInfo.pairedPcId = pcId;
+        mobilePcMap[mobileSocketId] = pcId;
+        mobInfo.socket.emit('mobile-connected', { pcId, roomId: pcId });
+        mobInfo.socket.emit('joined', { pcId, roomId: pcId });
+        socket.emit('mobile_joined', {
+          mobileId: mobileSocketId,
+          mobileName: mobInfo.deviceName,
+          deviceName: mobInfo.deviceName,
+          deviceType: mobInfo.deviceType,
+          roomId: pcId
+        });
+        console.log(`[PAIR] Auto-paired connected mobile "${mobInfo.deviceName}" with PC "${pcId}"`);
+      }
+    }
   };
 
   socket.on('pc-register', handlePcRegister);
@@ -363,18 +395,23 @@ io.on('connection', (socket) => {
     const activePcIds = Object.keys(registeredPcs);
     let requestedId = (data && (data.pcId || data.roomId)) ? String(data.pcId || data.roomId) : null;
     
-    // Auto-detect PC if there is only 1 PC registered and mobile didn't provide pcId
-    if (!requestedId && activePcIds.length === 1) {
+    // Auto-detect PC if there is at least 1 PC registered and mobile didn't provide pcId or asked for auto/default
+    if ((!requestedId || requestedId.toLowerCase() === 'default' || requestedId.toLowerCase() === 'auto' || requestedId === '') && activePcIds.length >= 1) {
       requestedId = activePcIds[0];
     }
 
     let targetPcId = requestedId;
 
-    // If requestedId not exact match, try case-insensitive or partial match
+    // If requestedId not exact match, try normalized match (ignore case, hyphens, underscores, spaces)
     if (targetPcId && !registeredPcs[targetPcId]) {
-      const lower = targetPcId.toLowerCase();
-      const match = activePcIds.find(k => k.toLowerCase() === lower);
+      const normTarget = targetPcId.toLowerCase().replace(/[-_ ]/g, '');
+      const match = activePcIds.find(k => k.toLowerCase().replace(/[-_ ]/g, '') === normTarget);
       if (match) targetPcId = match;
+    }
+
+    // Fallback: If still not matched but exactly 1 PC is online, route to it
+    if ((!targetPcId || !registeredPcs[targetPcId]) && activePcIds.length === 1) {
+      targetPcId = activePcIds[0];
     }
 
     if (!targetPcId || !registeredPcs[targetPcId]) {
@@ -472,6 +509,10 @@ io.on('connection', (socket) => {
   socket.on('APP_ACTION',     (d) => relayToPc('control-event', d));
   socket.on('APP_LIST',       (d) => relayToPc('control-event', { action: 'get_apps', ...d }));
   socket.on('KEYBOARD_INPUT', (d) => relayToPc('control-event', { action: 'type_text', ...d }));
+  socket.on('device_info',    (d) => relayToPc('device_info', d));
+  socket.on('device-info',    (d) => relayToPc('device-info', d));
+  socket.on('battery',        (d) => relayToPc('battery', d));
+  socket.on('telemetry',      (d) => relayToPc('telemetry', d));
 
   // ---- Relay: PC -> mobile (state updates, command results) ----
   socket.on('pc-state', (data) => {
